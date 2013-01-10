@@ -6,9 +6,11 @@ This is an Arduino based project that displays the currently selected gear in a 
 The key to this setup is one or more magnets on the shifter's metal shaft, and the six hall effect sensors at the approximate locations of the gears (1-5 and Reverse). Six or more speeds are currently not supported.
 
 **Core**
+
 This is a display-agnostic version of the core functionality. It will read the analog inputs, determine gear selection, and that's it. It will log detailed information to the Serial port if in debug mode and a device is listening for it. If you have your own display, start here.
 
 **v1 - 16x2 LCD Display**
+
 This is the first version I wrote, tuned for a standard 16x2 LCD screen. A schematic is included. This uses three push button switches and a potentiometer for mode switching, tolerance up, tolerance down, and LCD contrast. This version has 9 display modes:
 1. Basic Display
 1. Advanced Display
@@ -21,4 +23,5 @@ This is the first version I wrote, tuned for a standard 16x2 LCD screen. A schem
 1. Display off
 
 **v2 - Color Touchscreen**
+
 This uses a color touchscreen for both display and user input, mode switching, and tolerance adjustments. Will come soon.
