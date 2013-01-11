@@ -12,6 +12,7 @@ This is a display-agnostic version of the core functionality. It will read the a
 **v1 - 16x2 LCD Display**
 
 This is the first version I wrote, tuned for a standard 16x2 LCD screen. A schematic is included. This uses three push button switches and a potentiometer for mode switching, tolerance up, tolerance down, and LCD contrast. This version has 9 display modes:
+
 1. Basic Display
 1. Advanced Display
 1. Variables Display (tolerance in voltage)
