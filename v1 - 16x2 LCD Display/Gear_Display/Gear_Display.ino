@@ -113,6 +113,7 @@ void setup() {
   for (int g = 0; g < gears; g++) {
     pinMode(g, INPUT);
   }
+  pinMode(ledPin, OUTPUT);
   pinMode(modePin, INPUT);
   pinMode(upPin, INPUT);
   pinMode(downPin, INPUT);
@@ -163,6 +164,10 @@ void loop() {
       toleranceInterval++;
       eepromUpdateNeeded = true;
     }
+    else if (mode == 10) { //Debug Menu
+      debug = !debug;
+      eepromUpdateNeeded = true;
+    }
     else if (tolerance < 1023 - toleranceInterval) {
       tolerance += toleranceInterval;
       eepromUpdateNeeded = true;
@@ -171,7 +176,7 @@ void loop() {
   else if (checkPress(downPin) && tolerance > 0) {
     if (mode == 7) { //Method Menu
       method--;
-      if (method > MEAN_BASED) method = HIGH_BASED;
+      if (method < MEAN_BASED) method = HIGH_BASED;
       eepromUpdateNeeded = true;
     }
     else if (mode == 8) { //LED Menu
@@ -180,6 +185,10 @@ void loop() {
     }
     else if (mode == 9 && toleranceInterval > 1) { //Tolerance Interval Menu
       toleranceInterval--;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == 10) { //Debug Menu
+      debug = !debug;
       eepromUpdateNeeded = true;
     }
     else if (tolerance > toleranceInterval) {
@@ -194,6 +203,8 @@ void loop() {
   numberActive = countActive();
   gear = activeGear();
   inGear = gear > 0;
+  if (led && inGear) digitalWrite(ledPin, HIGH);
+  else digitalWrite(ledPin, LOW);
   
   //This saves all values to EEPROM, if ten seconds have passed since a change has been made
   if (eepromUpdateNeeded && millis() - eepromLastUpdated > 10000) writeEEPROM();
@@ -333,10 +344,10 @@ int getTrimmed(boolean theoretical) {
   //Find which gear gets trimmed
   //(Furthest off the subline)
   int maximum = 0;
-  int maximumValue = abs(values[0] - subline);
+  int maximumValue = 0;
   for (int g = 0; g < gears; g++) {
     int differential = abs(values[g] - subline);
-    if (differential > maximum) {
+    if (differential > maximumValue) {
       maximumValue = differential;
       maximum = g;
     }
@@ -635,12 +646,12 @@ void writeMenuMethod() {
   
   lcd.setCursor(0, 1);
   switch(method) {
-    case MEAN_BASED: lcd.print("Mean Based");
-    case TRIMMED_MEAN: lcd.print("Trimmed - Mean");
-    case TRIMMED_THEORETICAL: lcd.print("Trimmed - Theory");
-    case THEORETICAL: lcd.print("Theoretical");
-    case LOW_BASED: lcd.print("Low (0VDC)");
-    case HIGH_BASED: lcd.print("High (+5VDC");
+    case MEAN_BASED:          lcd.print("Mean Based      "); break;
+    case TRIMMED_MEAN:        lcd.print("Trimmed - Mean  "); break;
+    case TRIMMED_THEORETICAL: lcd.print("Trimmed - Theory"); break;
+    case THEORETICAL:         lcd.print("Theoretical     "); break;
+    case LOW_BASED:           lcd.print("Low (0VDC)      "); break;
+    case HIGH_BASED:          lcd.print("High (+5VDC)    "); break;
   }
 }
 
@@ -649,7 +660,7 @@ void writeMenuLED() {
   lcd.print("In Gear LED:");
   
   lcd.setCursor(0, 1);
-  if (led) lcd.print("ON");
+  if (led) lcd.print("ON ");
   else lcd.print("OFF");
 }
 
@@ -658,7 +669,12 @@ void writeMenuToleranceInterval() {
   lcd.print("T Interval:");
   
   lcd.setCursor(0, 1);
-  lcd.print(toleranceInterval);
+  lcd.print(padLeft(toleranceInterval, 3));
+  
+  lcd.setCursor(5, 1);
+  lcd.print("(");
+  lcd.print(toVoltage(toleranceInterval), 2);
+  lcd.print("V)");
 }
 
 void writeMenuDebug() {
@@ -666,7 +682,7 @@ void writeMenuDebug() {
   lcd.print("Debug Mode:");
   
   lcd.setCursor(0, 1);
-  if (debug) lcd.print("ON");
+  if (debug) lcd.print("ON ");
   else lcd.print("OFF");
 }
 
