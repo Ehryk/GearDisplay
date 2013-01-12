@@ -115,6 +115,62 @@
    </g>
   </g>
  </g>
+ <g partID="341160">
+  <g transform="translate(222.775,59.756)">
+   <g id="silkscreen">
+    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">Rev</text>
+   </g>
+  </g>
+ </g>
+ <g partID="340950">
+  <g transform="translate(218.131,124.07)">
+   <g id="silkscreen">
+    <text x="3.6" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">+</text>
+   </g>
+  </g>
+ </g>
+ <g partID="340930">
+  <g transform="translate(223.313,143.195)">
+   <g id="silkscreen">
+    <text x="19.6245" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">max 20VDC</text>
+   </g>
+  </g>
+ </g>
+ <g partID="340900">
+  <g transform="translate(223.426,138.876)">
+   <g id="silkscreen">
+    <text x="19.6245" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">min 11VDC</text>
+   </g>
+  </g>
+ </g>
+ <g partID="340870">
+  <g transform="translate(66.7128,63.6472)">
+   <g id="silkscreen">
+    <text x="43.2" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">v1 1.13.2013</text>
+   </g>
+  </g>
+ </g>
+ <g partID="340840">
+  <g transform="translate(53.6912,51.5264)">
+   <g id="silkscreen">
+    <text x="56.6928" y="7.84977" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="8.72197">By Eric Menze</text>
+   </g>
+  </g>
+ </g>
+ <g partID="340820">
+  <g transform="translate(30.3504,4.2408)">
+   <g id="silkscreen">
+    <text x="14.4567" y="6.50552" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.22835">Gear</text>
+   </g>
+  </g>
+ </g>
+ <g partID="340790">
+  <g transform="translate(109.469,129.266)">
+   <g id="silkscreen">
+    <text x="54.2128" y="6.50552" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.22837">Gear Display v1</text>
+   </g>
+  </g>
+ </g>
  <g partID="311302">
   <g transform="translate(79.04,144.8)">
    <g transform="matrix(-1,0,0,-1,0,0)">
@@ -144,13 +200,6 @@
    </g>
   </g>
  </g>
- <g partID="340820">
-  <g transform="translate(30.3503,4.2407)">
-   <g id="silkscreen">
-    <text x="14.4567" y="6.50552" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.22835">Gear</text>
-   </g>
-  </g>
- </g>
  <g partID="311352">
   <g transform="translate(117.56,130.76)">
    <g transform="matrix(-1,0,0,-1,0,0)">
@@ -162,52 +211,10 @@
    </g>
   </g>
  </g>
- <g partID="340790">
-  <g transform="translate(109.468,129.266)">
-   <g id="silkscreen">
-    <text x="54.2128" y="6.50552" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.22837">Gear Display v1</text>
-   </g>
-  </g>
- </g>
- <g partID="340840">
-  <g transform="translate(53.6916,51.5265)">
-   <g id="silkscreen">
-    <text x="56.6928" y="7.84977" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="8.72197">By Eric Menze</text>
-   </g>
-  </g>
- </g>
- <g partID="340870">
-  <g transform="translate(66.7124,63.6472)">
-   <g id="silkscreen">
-    <text x="43.2" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">v1 1.13.2013</text>
-   </g>
-  </g>
- </g>
- <g partID="340900">
-  <g transform="translate(223.426,138.876)">
-   <g id="silkscreen">
-    <text x="19.6245" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">min 11VDC</text>
-   </g>
-  </g>
- </g>
- <g partID="340930">
-  <g transform="translate(223.313,143.196)">
-   <g id="silkscreen">
-    <text x="19.6245" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">max 20VDC</text>
-   </g>
-  </g>
- </g>
- <g partID="340950">
-  <g transform="translate(218.131,124.07)">
+ <g partID="341230">
+  <g transform="translate(225.326,74.0648)">
    <g id="silkscreen">
     <text x="3.6" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">+</text>
-   </g>
-  </g>
- </g>
- <g partID="341160">
-  <g transform="translate(222.775,59.7559)">
-   <g id="silkscreen">
-    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">Rev</text>
    </g>
   </g>
  </g>
@@ -218,24 +225,10 @@
    </g>
   </g>
  </g>
- <g partID="341230">
-  <g transform="translate(225.326,74.0648)">
-   <g id="silkscreen">
-    <text x="3.6" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">+</text>
-   </g>
-  </g>
- </g>
  <g partID="341140">
-  <g transform="translate(222.799,49.647)">
+  <g transform="translate(222.799,49.6472)">
    <g id="silkscreen">
     <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">5th</text>
-   </g>
-  </g>
- </g>
- <g partID="341030">
-  <g transform="translate(236.715,129.389)">
-   <g id="silkscreen">
-    <text x="3.6" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">-</text>
    </g>
   </g>
  </g>
@@ -246,6 +239,34 @@
    </g>
   </g>
  </g>
+ <g partID="341100">
+  <g transform="translate(222.61,30.3712)">
+   <g id="silkscreen">
+    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">3rd</text>
+   </g>
+  </g>
+ </g>
+ <g partID="341080">
+  <g transform="translate(222.87,19.7912)">
+   <g id="silkscreen">
+    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">2nd</text>
+   </g>
+  </g>
+ </g>
+ <g partID="341050">
+  <g transform="translate(222.804,9.8944)">
+   <g id="silkscreen">
+    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">1st</text>
+   </g>
+  </g>
+ </g>
+ <g partID="341030">
+  <g transform="translate(236.715,129.39)">
+   <g id="silkscreen">
+    <text x="3.6" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">-</text>
+   </g>
+  </g>
+ </g>
  <g partID="341010">
   <g transform="translate(236.375,118.411)">
    <g id="silkscreen">
@@ -253,73 +274,10 @@
    </g>
   </g>
  </g>
- <g partID="341080">
-  <g transform="translate(222.87,19.7913)">
-   <g id="silkscreen">
-    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">2nd</text>
-   </g>
-  </g>
- </g>
- <g partID="341100">
-  <g transform="translate(222.61,30.3715)">
-   <g id="silkscreen">
-    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">3rd</text>
-   </g>
-  </g>
- </g>
  <g partID="340980">
-  <g transform="translate(207.678,123.831)">
+  <g transform="translate(207.678,123.83)">
    <g id="silkscreen">
     <text x="3.6" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">-</text>
-   </g>
-  </g>
- </g>
- <g partID="341050">
-  <g transform="translate(222.804,9.89437)">
-   <g id="silkscreen">
-    <text x="10.8" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">1st</text>
-   </g>
-  </g>
- </g>
- <g partID="341180">
-  <g transform="translate(143.618,137.697)">
-   <g id="silkscreen">
-    <text x="15.2635" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">Arduino</text>
-   </g>
-  </g>
- </g>
- <g partID="352010">
-  <g transform="translate(15.9755,13.1)">
-   <g id="silkscreen">
-    <text x="36" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">Display v1</text>
-   </g>
-  </g>
- </g>
- <g partID="352040">
-  <g transform="translate(211.133,2.23082)">
-   <g id="silkscreen">
-    <text x="28.3465" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.361">By Eric Menze</text>
-   </g>
-  </g>
- </g>
- <g partID="352100">
-  <g transform="translate(24.5485,73.7314)">
-   <g id="silkscreen">
-    <text x="82.859" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.361">Code available at www.github.com/Ehryk</text>
-   </g>
-  </g>
- </g>
- <g partID="353870">
-  <g transform="translate(94.8709,137.43)">
-   <g id="silkscreen">
-    <text x="15.2635" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">Arduino</text>
-   </g>
-  </g>
- </g>
- <g partID="353890">
-  <g transform="translate(77.3179,9.88336)">
-   <g id="silkscreen">
-    <text x="15.2635" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">Arduino</text>
    </g>
   </g>
  </g>
@@ -349,50 +307,92 @@
    </g>
   </g>
  </g>
- <g partID="377120">
-  <g transform="translate(41.4638,148.288)">
-   <g id="silkscreen">
-    <text x="62.1443" y="2.94367" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="3.27075">Code available at www.github.com/Ehryk</text>
-   </g>
-  </g>
- </g>
  <g partID="381140">
-  <g transform="translate(183.41,22.826)">
+  <g transform="translate(183.41,22.8256)">
    <g id="silkscreen">
     <text x="8.72197" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">330&#x3a9;</text>
    </g>
   </g>
  </g>
+ <g partID="377120">
+  <g transform="translate(41.464,148.288)">
+   <g id="silkscreen">
+    <text x="62.1443" y="2.94367" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="3.27075">Code available at www.github.com/Ehryk</text>
+   </g>
+  </g>
+ </g>
+ <g partID="353890">
+  <g transform="translate(77.3176,9.8832)">
+   <g id="silkscreen">
+    <text x="15.2635" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">Arduino</text>
+   </g>
+  </g>
+ </g>
+ <g partID="353870">
+  <g transform="translate(94.8712,137.43)">
+   <g id="silkscreen">
+    <text x="15.2635" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">Arduino</text>
+   </g>
+  </g>
+ </g>
+ <g partID="352100">
+  <g transform="translate(24.5488,73.7312)">
+   <g id="silkscreen">
+    <text x="82.859" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.361">Code available at www.github.com/Ehryk</text>
+   </g>
+  </g>
+ </g>
+ <g partID="352040">
+  <g transform="translate(211.133,2.2312)">
+   <g id="silkscreen">
+    <text x="28.3465" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.361">By Eric Menze</text>
+   </g>
+  </g>
+ </g>
+ <g partID="352010">
+  <g transform="translate(15.9752,13.1)">
+   <g id="silkscreen">
+    <text x="36" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">Display v1</text>
+   </g>
+  </g>
+ </g>
+ <g partID="341180">
+  <g transform="translate(143.618,137.697)">
+   <g id="silkscreen">
+    <text x="15.2635" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">Arduino</text>
+   </g>
+  </g>
+ </g>
  <g partID="382630">
-  <g transform="translate(60.5399,34.0439)">
+  <g transform="translate(60.54,34.044)">
    <g id="silkscreen">
     <text x="47.9711" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36101">Liquid Crystal Display</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="63840">
-  <g transform="translate(139.342,11.1571)">
+  <g transform="translate(139.342,11.1568)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Arduino</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="64250">
-  <g transform="translate(7.1968,11.2228)">
+  <g transform="translate(7.1968,11.2232)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Mode</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="64280">
-  <g transform="translate(0.750473,104.202)">
+  <g transform="translate(0.7504,104.202)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Down (-)</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="64310">
-  <g transform="translate(3.7439,60.1111)">
+  <g transform="translate(3.744,60.1112)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Up (+)</text>
    </g>
@@ -434,7 +434,7 @@
   </g>
  </g>
  <g id="partLabel" partID="64160">
-  <g transform="translate(104.799,17.3764)">
+  <g transform="translate(104.798,17.3768)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">16x2 LCD</text>
    </g>
@@ -466,14 +466,14 @@
   </g>
  </g>
  <g id="partLabel" partID="371180">
-  <g transform="translate(191.272,5.7939)">
+  <g transform="translate(191.272,5.7936)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">LED</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="372720">
-  <g transform="translate(188.898,18.3812)">
+  <g transform="translate(188.898,18.3816)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">R1</text>
    </g>
