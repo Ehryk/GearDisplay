@@ -6,20 +6,12 @@ Ehryk Menze
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
 
-#define MEAN 0
-#define TRIMMED 1
-#define THEORETICAL 2
-
-//Configure Pins
-int gear1pin = A0;
-int gear2pin = A1;
-int gear3pin = A2;
-int gear4pin = A3;
-int gear5pin = A4;
-int gearRpin = A15;
-int modePin = 8;
-int toleranceUpPin = 9;
-int toleranceDownPin = 10;
+#define MEAN_BASED 0
+#define TRIMMED_MEAN 1
+#define TRIMMED_THEORETICAL 2
+#define THEORETICAL 3
+#define LOW_BASED 4
+#define HIGH_BASED 5
 
 //Set up LCD pins for 4 bit mode
 int lcdRS = 12;
@@ -28,11 +20,10 @@ int lcdD4 = 5;
 int lcdD5 = 4;
 int lcdD6 = 3;
 int lcdD7 = 2;
-
 //initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(lcdRS, lcdEnable, lcdD4, lcdD5, lcdD6, lcdD7);
 
-//Create Custom Character
+//Create Custom LCD Characters
 byte sigma[8] = {
   B00000,
   B00000,
@@ -70,57 +61,65 @@ byte tColon[8] = {
   B01000,
 };
 
+//Configure Pins
+int gears = 6;
+int gearPin[6] = {0, 1, 2, 3, 4, 5};
+int modePin = 8;
+int upPin = 9;
+int downPin = 10;
+int ledPin = 1;
+
 //Declare Value Variables
 //Values will range between 0 and 1023, (0V and 5V respectively)
 //With a Resolution of 4.9mV / unit
-int gear1value = 0;
-int gear2value = 0;
-int gear3value = 0;
-int gear4value = 0;
-int gear5value = 0;
-int gearRvalue = 0;
-//This is what should be read by the ideal Hall Effect Sensor
-//Probably useless in this application
-int theoretical = 511;
-int numberActive = -2;
-int mode = 0;
-boolean inGear = false;
+int values[6];
+int theoretical = 511; //This is what should be read by the ideal Hall Effect Sensor, in a neutral magnetic environment.
+int numberActive = -2; //Number of gears engaged
+int method = MEAN_BASED; //Method of determining gear engagement
+int mode = 0; //Which display mode is selected
+int gear = -2; //Which gear is active, if any. 0 = Neutral.
+int baseline = 0; //The baseline from which any gear out of tolerance from is considered engaged
+int tolerance; //How much a gear can vary from the baseline before considered engaged
+int toleranceInterval = 5; //How much to vary the tolerance on a single press
+boolean inGear = false; //Whether or not the vehicle is in a gear
+boolean led = true; //Whether or not to light the LED when a gear is engaged
+
+//Debugging
+boolean debug = true;
 unsigned long debugRefresh = 0;
-//How often to refresh the serial port, in milliseconds
-int refreshInterval = 1000;
-boolean eepromUpdateNeeded = false;
-unsigned long eepromChange = 0;
-int eepromMode = 0;
-int eepromTolerance = 1;
+int refreshInterval = 1000; //How often to refresh the serial port, in milliseconds
+
+//These are addresses in the EEPROM for persistent storage
+int eepromSet = 0;
+int eepromMode = 1;
 int eepromMethod = 2;
-int gear = -2;
-int total = 0;
-int average = 0;
+int eepromTolerance[2] = {4, 5};
+int eepromDebug = 6;
+int eepromLED = 7;
+int eepromToleranceInterval = 8;
+boolean eepromUpdateNeeded = false;
+unsigned long eepromLastUpdated = 0;
 
 //Parameters
-boolean debug = true;
 int baud = 9600;
-int tolerance = 200;
+int defaultTolerance = 200;
 
 void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(baud);
   
   //Set pin modes
-  pinMode(gear1pin, INPUT);
-  pinMode(gear2pin, INPUT);
-  pinMode(gear3pin, INPUT);
-  pinMode(gear4pin, INPUT);
-  pinMode(gear5pin, INPUT);
-  pinMode(gearRpin, INPUT);
+  for (int g = 0; g < gears; g++) {
+    pinMode(g, INPUT);
+  }
   pinMode(modePin, INPUT);
-  pinMode(toleranceUpPin, INPUT);
-  pinMode(toleranceDownPin, INPUT);
+  pinMode(upPin, INPUT);
+  pinMode(downPin, INPUT);
   
   //Use internal pull-up resistors
   digitalWrite(modePin, HIGH);
-  digitalWrite(toleranceUpPin, HIGH);
-  digitalWrite(toleranceDownPin, HIGH);
+  digitalWrite(upPin, HIGH);
+  digitalWrite(downPin, HIGH);
   
   //Set up LCD
   lcd.begin(16, 2);
@@ -129,6 +128,8 @@ void setup() {
   lcd.createChar(4, fourColon);
   lcd.createChar(2, tColon);
   
+  readEEPROM();
+   
   writeCredits();
   delay(1500);
   lcd.clear();
@@ -143,20 +144,58 @@ void loop() {
   //Check for Mode Press
   if (checkPress(modePin)) {
     mode++;
-    if (mode > 8) mode = 0;
+    if (mode > 12) mode = 0;
     delay(100);
     lcd.clear();
   }
-  else if (checkPress(toleranceUpPin) && tolerance < 995) tolerance += 5;
-  else if (checkPress(toleranceDownPin) && tolerance > 0) tolerance -= 5;
+  else if (checkPress(upPin)) {
+    if (mode == 7) { //Method Menu
+      method++;
+      if (method > HIGH_BASED) method = MEAN_BASED;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == 8) { //LED Menu
+      led = !led;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == 9 && toleranceInterval < 255) { //Tolerance Interval Menu
+      toleranceInterval++;
+      eepromUpdateNeeded = true;
+    }
+    else if (tolerance < 1023 - toleranceInterval) {
+      tolerance += toleranceInterval;
+      eepromUpdateNeeded = true;
+    }
+  }
+  else if (checkPress(downPin) && tolerance > 0) {
+    if (mode == 7) { //Method Menu
+      method--;
+      if (method > MEAN_BASED) method = HIGH_BASED;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == 8) { //LED Menu
+      led = !led;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == 9 && toleranceInterval > 1) { //Tolerance Interval Menu
+      toleranceInterval--;
+      eepromUpdateNeeded = true;
+    }
+    else if (tolerance > toleranceInterval) {
+      tolerance -= toleranceInterval;
+      eepromUpdateNeeded = true;
+    }
+  }
   
   //Update the value variables
   readValues();
-  total = getTotal();
-  average = getMean(total);
+  baseline = computeBaseline(method);
   numberActive = countActive();
   gear = activeGear();
   inGear = gear > 0;
+  
+  //This saves all values to EEPROM, if ten seconds have passed since a change has been made
+  if (eepromUpdateNeeded && millis() - eepromLastUpdated > 10000) writeEEPROM();
   
   //This rereads in the case of an error or fault
   //(doesn't display errors, leaves last displayed values)
@@ -166,15 +205,12 @@ void loop() {
     Serial.print("Mode: ");
     Serial.println(mode);
     
-    Serial.print("Total: ");
-    Serial.println(total);
-    
-    Serial.print("Average: ");
-    Serial.print(average);
+    Serial.print("Baseline: ");
+    Serial.print(baseline);
     Serial.print(" (");
-    Serial.print(formatValue(average));
+    Serial.print(formatValue(baseline));
     Serial.print(") ");
-    Serial.print(toVoltage(average));
+    Serial.print(toVoltage(baseline));
     Serial.println("V");
     
     Serial.print("Tolerance: ");
@@ -196,7 +232,7 @@ void loop() {
       Serial.print(activeVoltage());
       Serial.println("V");
       Serial.print(" - Differential: ");
-      Serial.println(abs(activeValue() - average));
+      Serial.println(abs(activeValue() - baseline));
     }
     else {
       Serial.println(" - Active Gear: N/A");
@@ -204,55 +240,55 @@ void loop() {
     }
     
     Serial.print("Gear 1: ");
-    Serial.print(gear1value);
+    Serial.print(values[0]);
     Serial.print(" (");
-    Serial.print(formatValue(gear1value));
+    Serial.print(formatValue(values[0]));
     Serial.print(") ");
-    Serial.print(toVoltage(gear1value));
+    Serial.print(toVoltage(values[0]));
     Serial.println("V");
     
     Serial.print("Gear 2: ");
-    Serial.print(gear2value);
+    Serial.print(values[1]);
     Serial.print(" (");
-    Serial.print(formatValue(gear2value));
+    Serial.print(formatValue(values[1]));
     Serial.print(") ");
-    Serial.print(toVoltage(gear2value));
+    Serial.print(toVoltage(values[1]));
     Serial.println("V");
     
     Serial.print("Gear 3: ");
-    Serial.print(gear3value);
+    Serial.print(values[2]);
     Serial.print(" (");
-    Serial.print(formatValue(gear3value));
+    Serial.print(formatValue(values[2]));
     Serial.print(") ");
-    Serial.print(toVoltage(gear3value));
+    Serial.print(toVoltage(values[2]));
     Serial.println("V");
     
     Serial.print("Gear 4: ");
-    Serial.print(gear4value);
+    Serial.print(values[3]);
     Serial.print(" (");
-    Serial.print(formatValue(gear4value));
+    Serial.print(formatValue(values[3]));
     Serial.print(") ");
-    Serial.print(toVoltage(gear4value));
+    Serial.print(toVoltage(values[3]));
     Serial.println("V");
     
     Serial.print("Gear 5: ");
-    Serial.print(gear5value);
+    Serial.print(values[4]);
     Serial.print(" (");
-    Serial.print(formatValue(gear5value));
+    Serial.print(formatValue(values[4]));
     Serial.print(") ");
-    Serial.print(toVoltage(gear5value));
+    Serial.print(toVoltage(values[4]));
     Serial.println("V");
     
     Serial.print("Gear R: ");
-    Serial.print(gearRvalue);
+    Serial.print(values[5]);
     Serial.print(" (");
-    Serial.print(formatValue(gearRvalue));
+    Serial.print(formatValue(values[5]));
     Serial.print(") ");
-    Serial.print(toVoltage(gearRvalue));
+    Serial.print(toVoltage(values[5]));
     Serial.println("V");
     
     Serial.print("Standard Deviation: ");
-    Serial.println(getStandardDeviation(average));
+    Serial.println(getStandardDeviation(baseline));
     
     Serial.println();
     
@@ -264,43 +300,61 @@ void loop() {
 }
 
 void readValues(){
-  gear1value = readHallEffect(gear1pin);
-  gear2value = readHallEffect(gear2pin);
-  gear3value = readHallEffect(gear3pin);
-  gear4value = readHallEffect(gear4pin);
-  gear5value = readHallEffect(gear5pin);
-  gearRvalue = readHallEffect(gearRpin);
+  for (int g = 0; g < gears; g++) {
+    values[g] = readHallEffect(gearPin[g]);
+  }
 }
 
-int getTotal() {
-  return gear1value + gear2value + gear3value + gear4value + gear5value + gearRvalue;
+int computeBaseline(int m) {
+  if (m == MEAN_BASED) return getMean();
+  else if (m == TRIMMED_MEAN) return getTrimmed(false);
+  else if (m == TRIMMED_THEORETICAL) return getTrimmed(true);
+  else if (m == THEORETICAL) return theoretical;
+  else if (m == LOW_BASED) return 0;
+  else if (m == HIGH_BASED) return 1023;
+  
+  return -1;
 }
 
 int getMean() {
-  return gear1value + gear2value + gear3value + gear4value + gear5value + gearRvalue / 6;
+  int total = 0;
+  for (int g = 0; g < gears; g++) {
+    total += values[g];
+  }
+  return total / gears;
 }
 
-int getTrimmed(int method) {
-  int baseline = 0;
-  if (method == MEAN) {
-    baseline = getMean();
+int getTrimmed(boolean theoretical) {
+  int subline = 0;
+  if (theoretical) subline = theoretical;
+  else subline = getMean();
+  
+  //Find which gear gets trimmed
+  //(Furthest off the subline)
+  int maximum = 0;
+  int maximumValue = abs(values[0] - subline);
+  for (int g = 0; g < gears; g++) {
+    int differential = abs(values[g] - subline);
+    if (differential > maximum) {
+      maximumValue = differential;
+      maximum = g;
+    }
   }
-  else if (method == THEORETICAL) {
-    baseline = theoretical;
+  
+  int trimmedTotal = 0;
+  for (int g = 0; g < gears; g++) {
+    if (g != maximum) trimmedTotal += values[g];
   }
-  int differentials[6] = [abs(gear1value - baseline), abs(gear2value - baseline), abs(gear3value - baseline), abs(gear4value - baseline), abs(gear5value - baseline), abs(gearRvalue - baseline)];
-  return total / 6;
+  
+  return trimmedTotal / (gears - 1);
 }
 
-float getStandardDeviation(int average) {
+float getStandardDeviation(int b) {
   float variance = 0;
-  variance += pow(toVoltage(gear1value - average), 2);
-  variance += pow(toVoltage(gear2value - average), 2);
-  variance += pow(toVoltage(gear3value - average), 2);
-  variance += pow(toVoltage(gear4value - average), 2);
-  variance += pow(toVoltage(gear5value - average), 2);
-  variance += pow(toVoltage(gearRvalue - average), 2);
-  variance = variance / 6;
+  for (int g = 0; g < gears; g++) {
+    variance += pow(toVoltage(values[g] - b), 2);
+  }
+  variance = variance / gears;
   return sqrt(variance);
 }
 
@@ -316,12 +370,9 @@ int countActive() {
   //Return the number of pins avove tolerance
   int count = 0;
   
-  if (active(gear1value)) count ++;
-  if (active(gear2value)) count ++;
-  if (active(gear3value)) count ++;
-  if (active(gear4value)) count ++;
-  if (active(gear5value)) count ++;
-  if (active(gearRvalue)) count ++;
+  for (int g = 0; g < gears; g++) {
+    if (active(values[g])) count++;
+  }
   
   return count;
 }
@@ -333,47 +384,41 @@ int activePin() {
   if (numberActive == 0) return 0;
   if (numberActive >= 2) return -1;
   
-  if (active(gear1value)) return gear1pin;
-  if (active(gear2value)) return gear2pin;
-  if (active(gear3value)) return gear3pin;
-  if (active(gear4value)) return gear4pin;
-  if (active(gear5value)) return gear5pin;
-  if (active(gearRvalue)) return gearRpin;
+  for (int g = 0; g < gears; g++) {
+    if (active(values[g])) return gearPin[g];
+  }
   
+  //Houston, we have a problem
   return -2;
 }
 
 int activeGear() {
-  //Return the pin above tolerance
+  //Return the gear number above tolerance
   //Return -1 if more than one active
   
   if (numberActive == 0) return 0;
   if (numberActive >= 2) return -1;
   
-  if (active(gear1value)) return 1;
-  if (active(gear2value)) return 2;
-  if (active(gear3value)) return 3;
-  if (active(gear4value)) return 4;
-  if (active(gear5value)) return 5;
-  if (active(gearRvalue)) return 6;
+  for (int g = 0; g < gears; g++) {
+    if (active(values[g])) return g + 1;
+  }
   
+  //Houston, we have a problem
   return -2;
 }
 
 int activeValue() {
-  //Return the pin above tolerance
+  //Return the value above tolerance
   //Return -1 if more than one active
   
   if (numberActive == 0) return 0;
   if (numberActive >= 2) return -1;
   
-  if (active(gear1value)) return gear1value;
-  if (active(gear2value)) return gear2value;
-  if (active(gear3value)) return gear3value;
-  if (active(gear4value)) return gear4value;
-  if (active(gear5value)) return gear5value;
-  if (active(gearRvalue)) return gearRvalue;
+  for (int g = 0; g < gears; g++) {
+    if (active(values[g])) return values[g];
+  }
   
+  //Houston, we have a problem
   return -2;
 }
 
@@ -381,8 +426,8 @@ float activeVoltage() {
   return toVoltage(activeValue());
 }
 
-boolean active(int value) {
-  int deviation = abs(value - average);
+boolean active(int v) {
+  int deviation = abs(v - baseline);
   return deviation > tolerance;
 }
 
@@ -399,7 +444,7 @@ char* gearName(int g) {
     case 5:  return "Fifth  ";
     case 6:  return "Reverse";
   }
-  return "Fault";
+  return "Fault? ";
 }
 
 //Returns the Letter/Digit of a Gear
@@ -415,7 +460,7 @@ char gearChar(int g) {
     case 5:  return '5';
     case 6:  return 'R';
   }
-  return 'F';
+  return '?';
 }
 
 void updateDisplay(int mode, int gear) {
@@ -427,8 +472,12 @@ void updateDisplay(int mode, int gear) {
     case 4: writeValues(); break;
     case 5: writeVoltages(); break;
     case 6: writeFill(gearChar(gear)); break;
-    case 7: writeCredits(); break;
-    case 8: break;
+    case 7: writeMenuMethod(); break;
+    case 8: writeMenuLED(); break;
+    case 9: writeMenuToleranceInterval(); break;
+    case 10: writeMenuDebug(); break;
+    case 11: writeCredits(); break;
+    case 12: break;
   }
 }
 
@@ -472,12 +521,13 @@ void writeAdvanced(int g) {
   lcd.setCursor(9, 1);
   if (inGear) {
     lcd.print("D:");
-    lcd.print(toVoltage(abs(activeValue() - average)));
+    lcd.print(toVoltage(abs(activeValue() - baseline)));
     lcd.print("V");
   }
   else {
-    lcd.print("A:");
-    lcd.print(toVoltage(average));
+    if (method == MEAN_BASED) lcd.print("A:");
+    else lcd.print("B:");
+    lcd.print(toVoltage(baseline));
     lcd.print("V");
   }
 }
@@ -495,7 +545,7 @@ void writeVariables(int g, boolean voltage) {
   lcd.setCursor(10, 0);
   lcd.write((byte)0);
   lcd.print(":");
-  lcd.print(getStandardDeviation(average), 2);
+  lcd.print(getStandardDeviation(baseline), 2);
   
   //Print Tolerance
   lcd.setCursor(0, 1);
@@ -513,57 +563,58 @@ void writeVariables(int g, boolean voltage) {
   lcd.setCursor(7, 1);
   if (debug) lcd.print("D");
   
-  //Print Average Voltage
+  //Print Baseline Voltage
   lcd.setCursor(9, 1);
-  lcd.print("A:");
-  lcd.print(toVoltage(average), 2);
+  if (method == MEAN_BASED) lcd.print("A:");
+  else lcd.print("B:");
+  lcd.print(toVoltage(baseline), 2);
   lcd.print("V");
 }
 
 void writeValues() {
   lcd.setCursor(0, 0);
   lcd.write((byte)1);
-  lcd.print(formatValue(gear1value));
+  lcd.print(formatValue(values[0]));
   lcd.print(" ");
   
   lcd.print("2:");
-  lcd.print(formatValue(gear2value));
+  lcd.print(formatValue(values[1]));
   lcd.print(" ");
   
   lcd.print("3:");
-  lcd.print(formatValue(gear3value));
+  lcd.print(formatValue(values[2]));
   
   lcd.setCursor(0, 1);
   lcd.write((byte)4);
-  lcd.print(formatValue(gear4value));
+  lcd.print(formatValue(values[3]));
   lcd.print(" ");
   
   lcd.print("5:");
-  lcd.print(formatValue(gear5value));
+  lcd.print(formatValue(values[4]));
   lcd.print(" ");
   
   lcd.print("R:");
-  lcd.print(formatValue(gearRvalue));
+  lcd.print(formatValue(values[5]));
 }
 
 void writeVoltages() {
   lcd.setCursor(0, 0);
-  lcd.print(toVoltage(gear1value), 2);
+  lcd.print(toVoltage(values[0]), 2);
   lcd.print("V ");
   
-  lcd.print(toVoltage(gear2value), 2);
+  lcd.print(toVoltage(values[1]), 2);
   lcd.print("V ");
   
-  lcd.print(toVoltage(gear3value), 2);
+  lcd.print(toVoltage(values[2]), 2);
   
   lcd.setCursor(0, 1);
-  lcd.print(toVoltage(gear4value), 2);
+  lcd.print(toVoltage(values[3]), 2);
   lcd.print("V ");
   
-  lcd.print(toVoltage(gear5value), 2);
+  lcd.print(toVoltage(values[4]), 2);
   lcd.print("V ");
   
-  lcd.print(toVoltage(gearRvalue), 2);
+  lcd.print(toVoltage(values[5]), 2);
 }
 
 void writeFill(char c) {
@@ -575,6 +626,47 @@ void writeFill(char c) {
   for (int column = 0; column < 16; column ++) {
     lcd.print(c);
   }
+}
+
+void writeMenuMethod() {
+  lcd.setCursor(0, 0);
+  lcd.print("Method Used:");
+  
+  lcd.setCursor(0, 1);
+  switch(method) {
+    case MEAN_BASED: lcd.print("Mean Based");
+    case TRIMMED_MEAN: lcd.print("Trimmed - Mean");
+    case TRIMMED_THEORETICAL: lcd.print("Trimmed - Theory");
+    case THEORETICAL: lcd.print("Theoretical");
+    case LOW_BASED: lcd.print("Low (0VDC)");
+    case HIGH_BASED: lcd.print("High (+5VDC");
+  }
+}
+
+void writeMenuLED() {
+  lcd.setCursor(0, 0);
+  lcd.print("In Gear LED:");
+  
+  lcd.setCursor(0, 1);
+  if (led) lcd.print("ON");
+  else lcd.print("OFF");
+}
+
+void writeMenuToleranceInterval() {
+  lcd.setCursor(0, 0);
+  lcd.print("T Interval:");
+  
+  lcd.setCursor(0, 1);
+  lcd.print(toleranceInterval);
+}
+
+void writeMenuDebug() {
+  lcd.setCursor(0, 0);
+  lcd.print("Debug Mode:");
+  
+  lcd.setCursor(0, 1);
+  if (debug) lcd.print("ON");
+  else lcd.print("OFF");
 }
 
 void writeCredits() {
@@ -595,10 +687,10 @@ boolean debounce(int pin, int value, int timeDelay, int bounceCount) {
   return true;
 }
 
-String formatValue(int value) {
-  if (value < 1000) return padLeft(value, 3);
+String formatValue(int v) {
+  if (v < 1000) return padLeft(v, 3);
   String n = String("+");
-  n += String(padLeft(value % 1000, 2));
+  n += String(padLeft(v % 1000, 2));
   return n;
 }
 
@@ -612,4 +704,28 @@ String padLeft(int number, int padding) {
     currentMax *= 10;
   }
   return n;
+}
+
+boolean readEEPROM() {
+  if (EEPROM.read(eepromSet) != 42) return false; //EEPROM not set yet
+  mode = EEPROM.read(eepromMode);
+  method = EEPROM.read(eepromMethod);
+  tolerance = EEPROM.read(eepromTolerance[0])*256 + EEPROM.read(eepromTolerance[1]);
+  debug = EEPROM.read(eepromDebug);
+  led = EEPROM.read(eepromLED);
+  toleranceInterval = EEPROM.read(eepromToleranceInterval);
+}
+
+void writeEEPROM() {
+  EEPROM.write(eepromSet, 42); //EEPROM marked as initialized
+  EEPROM.write(eepromMode, mode);
+  EEPROM.write(eepromMethod, method);
+  EEPROM.write(eepromTolerance[0], tolerance/256);
+  EEPROM.write(eepromTolerance[1], tolerance%256);
+  EEPROM.write(eepromDebug, debug);
+  EEPROM.write(eepromLED, led);
+  EEPROM.write(eepromToleranceInterval, toleranceInterval);
+  
+  eepromLastUpdated = millis();
+  eepromUpdateNeeded = false; 
 }
