@@ -14,12 +14,12 @@ Ehryk Menze
 #define HIGH_BASED 5
 
 //Set up LCD pins for 4 bit mode
-int lcdRS = 12;
-int lcdEnable = 11;
-int lcdD4 = 5;
-int lcdD5 = 4;
-int lcdD6 = 3;
-int lcdD7 = 2;
+int lcdRS = 9;
+int lcdEnable = 8;
+int lcdD4 = 7;
+int lcdD5 = 6;
+int lcdD6 = 5;
+int lcdD7 = 4;
 //initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(lcdRS, lcdEnable, lcdD4, lcdD5, lcdD6, lcdD7);
 
@@ -63,11 +63,12 @@ byte tColon[8] = {
 
 //Configure Pins
 int gears = 6;
-int gearPin[6] = {0, 1, 2, 3, 4, 5};
-int modePin = 8;
-int upPin = 9;
-int downPin = 10;
-int ledPin = 1;
+int gearPin[6] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
+//Digital Input Pins
+int ledPin = 3;
+int modePin = 10;
+int upPin = 11;
+int downPin = 12;
 
 //Declare Value Variables
 //Values will range between 0 and 1023, (0V and 5V respectively)
