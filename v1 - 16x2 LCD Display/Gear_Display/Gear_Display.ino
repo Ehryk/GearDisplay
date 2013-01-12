@@ -4,7 +4,11 @@ Ehryk Menze
 */
 
 #include <LiquidCrystal.h>
-#include <stdlib.h>
+#include <EEPROM.h>
+
+#define MEAN 0
+#define TRIMMED 1
+#define THEORETICAL 2
 
 //Configure Pins
 int gear1pin = A0;
@@ -12,7 +16,7 @@ int gear2pin = A1;
 int gear3pin = A2;
 int gear4pin = A3;
 int gear5pin = A4;
-int gearRpin = A5;
+int gearRpin = A15;
 int modePin = 8;
 int toleranceUpPin = 9;
 int toleranceDownPin = 10;
@@ -84,6 +88,11 @@ boolean inGear = false;
 unsigned long debugRefresh = 0;
 //How often to refresh the serial port, in milliseconds
 int refreshInterval = 1000;
+boolean eepromUpdateNeeded = false;
+unsigned long eepromChange = 0;
+int eepromMode = 0;
+int eepromTolerance = 1;
+int eepromMethod = 2;
 int gear = -2;
 int total = 0;
 int average = 0;
@@ -144,7 +153,7 @@ void loop() {
   //Update the value variables
   readValues();
   total = getTotal();
-  average = getAverage(total);
+  average = getMean(total);
   numberActive = countActive();
   gear = activeGear();
   inGear = gear > 0;
@@ -267,7 +276,19 @@ int getTotal() {
   return gear1value + gear2value + gear3value + gear4value + gear5value + gearRvalue;
 }
 
-int getAverage(int total) {
+int getMean() {
+  return gear1value + gear2value + gear3value + gear4value + gear5value + gearRvalue / 6;
+}
+
+int getTrimmed(int method) {
+  int baseline = 0;
+  if (method == MEAN) {
+    baseline = getMean();
+  }
+  else if (method == THEORETICAL) {
+    baseline = theoretical;
+  }
+  int differentials[6] = [abs(gear1value - baseline), abs(gear2value - baseline), abs(gear3value - baseline), abs(gear4value - baseline), abs(gear5value - baseline), abs(gearRvalue - baseline)];
   return total / 6;
 }
 

@@ -3,72 +3,15 @@ Manual Transmission Gear Display
 Ehryk Menze
 */
 
-#include <LiquidCrystal.h>
-#include <EEPROM.h>
+#include <Arduino.h>
+#include <Comparator.h>
 
-#define MEAN 0
-#define TRIMMED 1
-#define THEORETICAL 2
+Comparator::Comparator()
+{
+	analogPins = [ A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15 ];
+}
 
-//Configure Pins
-int gear1pin = A0;
-int gear2pin = A1;
-int gear3pin = A2;
-int gear4pin = A3;
-int gear5pin = A4;
-int gearRpin = A5;
-int modePin = 8;
-int toleranceUpPin = 9;
-int toleranceDownPin = 10;
-
-//Set up LCD pins for 4 bit mode
-int lcdRS = 12;
-int lcdEnable = 11;
-int lcdD4 = 5;
-int lcdD5 = 4;
-int lcdD6 = 3;
-int lcdD7 = 2;
-
-//initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(lcdRS, lcdEnable, lcdD4, lcdD5, lcdD6, lcdD7);
-
-//Create Custom Character
-byte sigma[8] = {
-  B00000,
-  B00000,
-  B00000,
-  B01111,
-  B10010,
-  B10010,
-  B01100,
-};
-byte oneColon[8] = {
-  B01000,
-  B11011,
-  B01011,
-  B01000,
-  B01011,
-  B01011,
-  B11100,
-};
-byte fourColon[8] = {
-  B00100,
-  B01101,
-  B10101,
-  B11110,
-  B00101,
-  B00101,
-  B00100,
-};
-byte tColon[8] = {
-  B11100,
-  B01011,
-  B01011,
-  B01000,
-  B01011,
-  B01011,
-  B01000,
-};
+Comparator::Comparator();
 
 //Declare Value Variables
 //Values will range between 0 and 1023, (0V and 5V respectively)
