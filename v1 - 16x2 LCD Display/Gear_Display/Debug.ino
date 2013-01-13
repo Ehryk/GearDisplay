@@ -1,4 +1,6 @@
-
+/*
+Debug Methods for variable inspection
+*/
 
 void writeDebug(unsigned long loopTime) {
   Serial.print("Mode: ");

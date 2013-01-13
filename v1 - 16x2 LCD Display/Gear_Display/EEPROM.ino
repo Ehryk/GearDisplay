@@ -2,7 +2,6 @@
 Reads and writes to and from the EEPROM for persistant storage
 */
 
-
 boolean readEEPROM() {
   if (EEPROM.read(eepromSet) != 42) return false; //EEPROM not set yet
   mode = EEPROM.read(eepromMode);

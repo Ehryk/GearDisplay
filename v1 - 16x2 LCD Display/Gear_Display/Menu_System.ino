@@ -28,14 +28,26 @@ void modePressed() {
 }
 
 void upPressed() {
-  if (tolerance < 1023 - toleranceInterval) {
+  if (!inMenu && mode == MODE_MENU) {
+    inMenu = true;
+  }
+  else if (!inLog && mode == MODE_LOG) {
+    inLog = true;
+  }
+  else if (tolerance < 1023 - toleranceInterval) {
     tolerance += toleranceInterval;
     eepromUpdateNeeded = true;
   }
 }
 
 void downPressed() {
-  if (tolerance > toleranceInterval && tolerance > 0) {
+  if (!inMenu && mode == MODE_MENU) {
+    inMenu = true;
+  }
+  else if (!inLog && mode == MODE_LOG) {
+    inLog = true;
+  }
+  else if (tolerance > toleranceInterval && tolerance > 0) {
     tolerance -= toleranceInterval;
     eepromUpdateNeeded = true;
   }
@@ -131,14 +143,14 @@ void writeVariables(int g, boolean voltage) {
   
   //Print Standard Deviation
   lcd.setCursor(10, 0);
-  lcd.write((byte)0);
+  lcd.write((byte)SIGMA);
   lcd.print(":");
   lcd.print(getStandardDeviation(baseline), 2);
   
   //Print Tolerance
   lcd.setCursor(0, 1);
   if (voltage) {
-    lcd.write((byte)2);
+    lcd.write((byte)T_COLON);
     lcd.print(toVoltage(tolerance), 2);
     lcd.print("V");
   }
@@ -161,7 +173,7 @@ void writeVariables(int g, boolean voltage) {
 
 void writeValues() {
   lcd.setCursor(0, 0);
-  lcd.write((byte)1);
+  lcd.write((byte)ONE_COLON);
   lcd.print(formatValue(values[0]));
   lcd.print(" ");
   
@@ -173,7 +185,7 @@ void writeValues() {
   lcd.print(formatValue(values[2]));
   
   lcd.setCursor(0, 1);
-  lcd.write((byte)4);
+  lcd.write((byte)FOUR_COLON);
   lcd.print(formatValue(values[3]));
   lcd.print(" ");
   

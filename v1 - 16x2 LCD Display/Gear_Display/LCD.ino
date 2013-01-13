@@ -2,6 +2,11 @@
 Configures and handles the LCD Display
 */
 
+#define SIGMA 0
+#define ONE_COLON 1
+#define T_COLON 2
+#define FOUR_COLON 4
+
 //Create Custom LCD Characters
 byte sigma[8] = {
   B00000,
@@ -41,8 +46,8 @@ byte tColon[8] = {
 };
 
 void createCustomCharacters() {
-  lcd.createChar(0, sigma);
-  lcd.createChar(1, oneColon);
-  lcd.createChar(4, fourColon);
-  lcd.createChar(2, tColon);
+  lcd.createChar(SIGMA, sigma);
+  lcd.createChar(ONE_COLON, oneColon);
+  lcd.createChar(FOUR_COLON, fourColon);
+  lcd.createChar(T_COLON, tColon);
 }

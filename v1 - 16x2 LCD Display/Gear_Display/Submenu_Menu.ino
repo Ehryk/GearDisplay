@@ -23,10 +23,7 @@ void menuModePressed() {
 }
 
 void menuUpPressed() {
-  if (!inMenu && mode == MODE_MENU) {
-    inMenu = true;
-  }
-  else if (inMenu && menuMode == MENU_METHOD) {
+  if (inMenu && menuMode == MENU_METHOD) {
     method++;
     if (method > METHOD_END) method = METHOD_BEGIN;
     eepromUpdateNeeded = true;
@@ -58,10 +55,7 @@ void menuUpPressed() {
 }
 
 void menuDownPressed() {
-  if (!inMenu && mode == MODE_MENU) {
-    inMenu = true;
-  }
-  else if (inMenu && menuMode == MENU_METHOD) {
+  if (inMenu && menuMode == MENU_METHOD) {
     method--;
     if (method < MEAN_BASED) method = HIGH_BASED;
     eepromUpdateNeeded = true;

@@ -30,19 +30,13 @@ void logModePressed() {
 }
 
 void logUpPressed() {
-  if (!inLog && mode == MODE_LOG) {
-    inLog = true;
-  }
-  else if (inLog && logMode == LOG_EXIT) {
+  if (inLog && logMode == LOG_EXIT) {
     inLog = false;
   }
 }
 
 void logDownPressed() {
-  if (!inLog && mode == MODE_LOG) {
-    inLog = true;
-  }
-  else if (inLog && logMode == LOG_EXIT) {
+  if (inLog && logMode == LOG_EXIT) {
     inLog = false;
   }
 }
@@ -121,7 +115,7 @@ void writeLogUpTime(int divisor, char unit) {
 
 void writeLogShifts(boolean lifeTime) {
   lcd.setCursor(0, 0);
-  lcd.write((byte)1);
+  lcd.write((byte)ONE_COLON);
   if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[0], 3));
   else lcd.print(padLeft(shiftsToGear[0], 3));
   lcd.print(" ");
@@ -136,7 +130,7 @@ void writeLogShifts(boolean lifeTime) {
   else lcd.print(padLeft(shiftsToGear[2], 3));
   
   lcd.setCursor(0, 1);
-  lcd.write((byte)4);
+  lcd.write((byte)FOUR_COLON);
   if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[3], 3));
   else lcd.print(padLeft(shiftsToGear[3], 3));
   lcd.print(" ");
@@ -153,7 +147,7 @@ void writeLogShifts(boolean lifeTime) {
 
 void writeLogGearTime(int divisor, char unit, boolean lifeTime) {
   lcd.setCursor(0, 0);
-  lcd.write((byte)1);
+  lcd.write((byte)ONE_COLON);
   if (lifeTime) lcd.print(padLeft(lifeTimeInGear[1] / divisor, 2));
   else lcd.print(padLeft(timeInGear[1] / divisor, 2));
   lcd.print(unit);
@@ -171,7 +165,7 @@ void writeLogGearTime(int divisor, char unit, boolean lifeTime) {
   lcd.print(unit);
   
   lcd.setCursor(0, 1);
-  lcd.write((byte)4);
+  lcd.write((byte)FOUR_COLON);
   if (lifeTime) lcd.print(padLeft(lifeTimeInGear[4] / divisor, 2));
   else lcd.print(padLeft(timeInGear[4] / divisor, 2));
   lcd.print(unit);
@@ -197,7 +191,7 @@ void writeLogGearPercent(boolean lifeTime) {
   }
   
   lcd.setCursor(0, 0);
-  lcd.write((byte)1);
+  lcd.write((byte)ONE_COLON);
   if (lifeTime) lcd.print(padLeft(lifeTimeInGear[1] / total, 2));
   else lcd.print(padLeft(timeInGear[1] / total * 100, 0));
   lcd.print("% ");
@@ -213,7 +207,7 @@ void writeLogGearPercent(boolean lifeTime) {
   lcd.print("%");
   
   lcd.setCursor(0, 1);
-  lcd.write((byte)4);
+  lcd.write((byte)FOUR_COLON);
   if (lifeTime) lcd.print(padLeft(lifeTimeInGear[4] / total, 2));
   else lcd.print(padLeft(timeInGear[4] / total * 100, 0));
   lcd.print("% ");
