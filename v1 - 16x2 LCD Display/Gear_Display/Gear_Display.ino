@@ -6,33 +6,6 @@ Ehryk Menze
 #include <EEPROM.h>
 #include <LiquidCrystal.h>
 
-//Methods of computation baselines
-#define METHOD_BEGIN 0
-#define MEAN_BASED 0
-#define TRIM1_MEAN 1
-#define TRIM1_THEORETICAL 2
-#define TRIM1_HIGHEST 3
-#define TRIM1_LOWEST 4
-#define TRIM2_MEAN 5
-#define TRIM2_THEORETICAL 6
-#define TRIM2_HIGHEST 7
-#define TRIM2_LOWEST 8
-#define TRIM3_MEAN 9
-#define TRIM3_THEORETICAL 10
-#define TRIM3_HIGHEST 11
-#define TRIM3_LOWEST 12
-#define THEORETICAL 13
-#define LOW_BASED 14
-#define HIGH_BASED 15
-#define METHOD_END 15
-
-//State of the LED
-#define LED_BEGIN 0
-#define LED_OFF 0
-#define LED_IN_GEAR 1
-#define LED_NEUTRAL 2
-#define LED_END 2
-
 //Set up LCD pins for 4 bit mode
 int lcdRS = 9;
 int lcdEnable = 8;
@@ -59,7 +32,7 @@ int downPin = 12;
 int values[6];
 int theoretical = 511; //This is what should be read by the ideal Hall Effect Sensor, in a neutral magnetic environment.
 int numberActive = -2; //Number of gears engaged
-int method = MEAN_BASED; //Method of determining gear engagement
+int method = 0; //Method of determining gear engagement (Starting at MEAN_BASED)
 int mode = 0; //Which display mode is selected
 boolean saveMode = true; //Persists mode across power cycles
 boolean inMenu = false; //Whether the user is in the menu system
@@ -75,7 +48,7 @@ int baseline = 0; //The baseline from which any gear out of tolerance from is co
 int tolerance; //How much a gear can vary from the baseline before considered engaged
 int toleranceInterval = 5; //How much to vary the tolerance on a single press
 boolean inGear = false; //Whether or not the vehicle is in a gear
-int led = LED_IN_GEAR; //Whether or not to light the LED when a gear is engaged, neutral, or off
+int led = 1; //Whether or not to light the LED when a gear is engaged (default), neutral, or off
 int baud = 9600; //Used for Serial communication
 int defaultTolerance = 200; //Initial Tolerance
 unsigned long lastLoopStart = 0;
@@ -186,12 +159,8 @@ void loop() {
   gear = activeGear();
   inGear = gear > 0;
   
-  //Handle LED
-  if (led == LED_IN_GEAR && inGear) digitalWrite(ledPin, HIGH);
-  else if (led == LED_NEUTRAL && !inGear) digitalWrite(ledPin, HIGH);
-  else digitalWrite(ledPin, LOW);
-  //Handle LCD Brightness
-  digitalWrite(lcdBrightness, brightness);
+  setLED(inGear);
+  setLCDBrightness(brightness);
   
   //This saves all values to EEPROM, if the eeprom interval (in ms) has passed AND change has been made
   if (enableEEPROM && eepromUpdateNeeded && millis() - eepromLastUpdated > eepromInterval) writeEEPROM();

@@ -1,3 +1,25 @@
+
+//Methods of computation baselines
+#define MEAN_BASED 0
+#define TRIM1_MEAN 1
+#define TRIM1_THEORETICAL 2
+#define TRIM1_HIGHEST 3
+#define TRIM1_LOWEST 4
+#define TRIM2_MEAN 5
+#define TRIM2_THEORETICAL 6
+#define TRIM2_HIGHEST 7
+#define TRIM2_LOWEST 8
+#define TRIM3_MEAN 9
+#define TRIM3_THEORETICAL 10
+#define TRIM3_HIGHEST 11
+#define TRIM3_LOWEST 12
+#define THEORETICAL 13
+#define LOW_BASED 14
+#define HIGH_BASED 15
+
+#define METHOD_BEGIN 0
+#define METHOD_END 15
+
 void readValues(){
   for (int g = 0; g < gears; g++) {
     values[g] = readHallEffect(gearPin[g]);

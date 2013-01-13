@@ -24,23 +24,6 @@ It provided details accumulated over time about shifting habits, etc.
 #define LOG_BEGIN 0
 #define LOG_END 15
 
-void logModePressed() {
-  logMode ++;
-  if (logMode > LOG_END) logMode = LOG_BEGIN;
-}
-
-void logUpPressed() {
-  if (inLog && logMode == LOG_EXIT) {
-    inLog = false;
-  }
-}
-
-void logDownPressed() {
-  if (inLog && logMode == LOG_EXIT) {
-    inLog = false;
-  }
-}
-
 void writeLog(int logScreen) {
   if (!inLog) writePrompt("ENTER LOG:");
   else {
@@ -252,4 +235,25 @@ void writeLogNeutral(int divisor, char unit, boolean lifeTime) {
   if (divisor > 0) lcd.print(neutralTime / divisor, 2);
   else lcd.print(neutralTime / (gearTime + neutralTime) * 100, 1);
   lcd.print(unit);
+}
+
+//                      //
+/* -- INPUT HANDLING -- */
+//                      //
+
+void logModePressed() {
+  logMode ++;
+  if (logMode > LOG_END) logMode = LOG_BEGIN;
+}
+
+void logUpPressed() {
+  switch(logMode) {
+    case LOG_EXIT: inLog = false; break;
+  }
+}
+
+void logDownPressed() {
+  switch(logMode) {
+    case LOG_EXIT: inLog = false; break;
+  }
 }

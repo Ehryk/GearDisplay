@@ -21,38 +21,6 @@ It has two submenus, Menu and Log
 #define MODE_BEGIN 0
 #define MODE_END 12
 
-void modePressed() {
-  mode++;
-  if (mode > MODE_END) mode = MODE_BEGIN;
-  else if (!debug && (mode == MODE_VOLTAGES || mode == MODE_VALUES)) mode = MODE_MENU;
-}
-
-void upPressed() {
-  if (!inMenu && mode == MODE_MENU) {
-    inMenu = true;
-  }
-  else if (!inLog && mode == MODE_LOG) {
-    inLog = true;
-  }
-  else if (tolerance < 1023 - toleranceInterval) {
-    tolerance += toleranceInterval;
-    eepromUpdateNeeded = true;
-  }
-}
-
-void downPressed() {
-  if (!inMenu && mode == MODE_MENU) {
-    inMenu = true;
-  }
-  else if (!inLog && mode == MODE_LOG) {
-    inLog = true;
-  }
-  else if (tolerance > toleranceInterval && tolerance > 0) {
-    tolerance -= toleranceInterval;
-    eepromUpdateNeeded = true;
-  }
-}
-
 void updateDisplay(int mode, int gear) {
   switch(mode) {
     case MODE_BASIC: writeBasic(gear, ' '); break;
@@ -234,4 +202,40 @@ void writeCredits() {
   
   lcd.setCursor(0, 1);
   lcd.print("By Eric C Menze.");
+}
+
+//                      //
+/* -- INPUT HANDLING -- */
+//                      //
+
+void modePressed() {
+  mode++;
+  if (mode > MODE_END) mode = MODE_BEGIN;
+  else if (!debug && (mode == MODE_VOLTAGES || mode == MODE_VALUES)) mode = MODE_MENU; //Skip to Menu if not in Debug Mode
+}
+
+void upPressed() {
+  if (!inMenu && mode == MODE_MENU) {
+    inMenu = true;
+  }
+  else if (!inLog && mode == MODE_LOG) {
+    inLog = true;
+  }
+  else if (tolerance + toleranceInterval <= 1023) {
+    tolerance += toleranceInterval;
+    eepromUpdateNeeded = true;
+  }
+}
+
+void downPressed() {
+  if (!inMenu && mode == MODE_MENU) {
+    inMenu = true;
+  }
+  else if (!inLog && mode == MODE_LOG) {
+    inLog = true;
+  }
+  else if (tolerance - toleranceInterval >= 0) {
+    tolerance -= toleranceInterval;
+    eepromUpdateNeeded = true;
+  }
 }
