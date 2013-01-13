@@ -97,7 +97,7 @@ float getStandardDeviation(int b) {
 }
 
 int countActive() {
-  //Return the number of pins avove tolerance
+  //Return the number of pins above tolerance
   int count = 0;
   
   for (int g = 0; g < gears; g++) {

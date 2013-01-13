@@ -256,7 +256,7 @@ int readHallEffect(int pin) {
 }
 
 int countActive() {
-  //Return the number of pins avove tolerance
+  //Return the number of pins above tolerance
   int count = 0;
   
   if (active(gear1value)) count ++;
