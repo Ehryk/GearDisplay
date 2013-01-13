@@ -46,13 +46,14 @@ Ehryk Menze
 #define MENU_BEGIN 0
 #define MENU_METHOD 0
 #define MENU_LED 1
-#define MENU_LOGGING 2
+#define MENU_BRIGHTNESS 2
 #define MENU_TOLERANCE_INTERVAL 3
-#define MENU_DEBUG 4
-#define MENU_VOLTAGES 5
-#define MENU_VALUES 6
-#define MENU_EXIT 7
-#define MENU_END 7
+#define MENU_LOGGING 4
+#define MENU_DEBUG 5
+#define MENU_VOLTAGES 6
+#define MENU_VALUES 7
+#define MENU_EXIT 8
+#define MENU_END 8
 
 #define LOG_BEGIN 0
 #define LOG_HIGHWAY_CITY 0
@@ -80,6 +81,7 @@ int lcdD4 = 7;
 int lcdD5 = 6;
 int lcdD6 = 5;
 int lcdD7 = 4;
+int lcdBrightness = 3;
 //initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(lcdRS, lcdEnable, lcdD4, lcdD5, lcdD6, lcdD7);
 
@@ -125,7 +127,7 @@ byte tColon[8] = {
 int gears = 6;
 int gearPin[6] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
 //Digital Input Pins
-int ledPin = 3;
+int ledPin = 2;
 int modePin = 10;
 int upPin = 11;
 int downPin = 12;
@@ -144,6 +146,7 @@ int menuMode = 0; //Which menu mode is selected
 boolean inLog = false; //Whether the user is in the log system
 int logMode = 0; //Which log mode is selected
 int brightness = 255; //LCD Brightness
+int brightnessInterval = 15; //LCD Brightness Increment to increase/decrease by
 char separator = '-'; //Surrounds gear char
 int gear = -2; //Which gear is active, if any. 0 = Neutral.
 int baseline = 0; //The baseline from which any gear out of tolerance from is considered engaged
@@ -209,6 +212,7 @@ void setup() {
   pinMode(modePin, INPUT);
   pinMode(upPin, INPUT);
   pinMode(downPin, INPUT);
+  pinMode(lcdBrightness, OUTPUT);
   
   //Use internal pull-up resistors
   digitalWrite(modePin, HIGH);
@@ -491,8 +495,9 @@ void writeMenu(int menuScreen) {
     switch (menuScreen) {
       case MENU_METHOD: writeMenuMethod(); break;
       case MENU_LED: writeMenuLED(); break;
-      case MENU_LOGGING: writeMenuLogging(); break;
+      case MENU_BRIGHTNESS: writeMenuBrightness(); break;
       case MENU_TOLERANCE_INTERVAL: writeMenuToleranceInterval(); break;
+      case MENU_LOGGING: writeMenuLogging(); break;
       case MENU_DEBUG: writeMenuDebug(); break;
       case MENU_VOLTAGES: writeVoltages(); break;
       case MENU_VALUES: writeValues(); break;
@@ -720,6 +725,20 @@ void writeMenuLED() {
   if (led == LED_IN_GEAR) lcd.print("ON - In Gear");
   else if (led == LED_NEUTRAL) lcd.print("ON - Neutral");
   else lcd.print("OFF         ");
+}
+
+void writeMenuBrightness() {
+  lcd.setCursor(0, 0);
+  lcd.print("LCD Brightness:");
+  
+  lcd.setCursor(0, 1);
+  lcd.print("V:");
+  lcd.print(brightness);
+  
+  lcd.setCursor(8, 1);
+  lcd.print("(");
+  lcd.print(brightness/255 * 100);
+  lcd.print("%)");
 }
 
 void writeMenuToleranceInterval() {
@@ -974,6 +993,10 @@ void handleButtons() {
       if (led > LED_END) led = LED_BEGIN;
       eepromUpdateNeeded = true;
     }
+    else if (inMenu && menuMode == MENU_BRIGHTNESS && brightness + brightnessInterval < 255) {
+      brightness += brightnessInterval;
+      eepromUpdateNeeded = true;
+    }
     else if (inMenu && menuMode == MENU_LOGGING) {
       enableLog = !enableLog;
       eepromUpdateNeeded = true;
@@ -1004,29 +1027,33 @@ void handleButtons() {
     if (!inMenu && mode == MODE_MENU) {
       inMenu = true;
     }
-    else if (mode == MODE_MENU && menuMode == MENU_METHOD) {
+    else if (inMenu && menuMode == MENU_METHOD) {
       method--;
       if (method < MEAN_BASED) method = HIGH_BASED;
       eepromUpdateNeeded = true;
     }
-    else if (mode == MODE_MENU && menuMode == MENU_LED) {
-      led++;
-      if (led > LED_BEGIN) led = LED_END;
+    else if (inMenu && menuMode == MENU_LED) {
+      led--;
+      if (led < LED_BEGIN) led = LED_END;
       eepromUpdateNeeded = true;
     }
-    else if (mode == MODE_MENU && menuMode == MENU_LOGGING) {
+    else if (inMenu && menuMode == MENU_BRIGHTNESS && brightness > brightnessInterval) {
+      brightness -= brightnessInterval;
+      eepromUpdateNeeded = true;
+    }
+    else if (inMenu && menuMode == MENU_LOGGING) {
       enableLog = !enableLog;
       eepromUpdateNeeded = true;
     }
-    else if (mode == MODE_MENU && menuMode == MENU_TOLERANCE_INTERVAL && toleranceInterval < 255) {
+    else if (inMenu && menuMode == MENU_TOLERANCE_INTERVAL && toleranceInterval < 255) {
       toleranceInterval++;
       eepromUpdateNeeded = true;
     }
-    else if (mode == MODE_MENU && menuMode == MENU_DEBUG) {
+    else if (inMenu && menuMode == MENU_DEBUG) {
       debug = !debug;
       eepromUpdateNeeded = true;
     }
-    else if (mode == MODE_MENU && menuMode == MENU_EXIT) {
+    else if (inMenu && menuMode == MENU_EXIT) {
       inMenu = false;
     }
     else if (!inLog && mode == MODE_LOG) {
