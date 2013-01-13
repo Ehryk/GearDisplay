@@ -32,21 +32,42 @@ char gearChar(int g) {
   return '?';
 }
 
-
+//Returns the Accent Char
+char accentChar(int a) {
+  return accents[a];
+}
 
 String formatValue(int v) {
-  if (v < 1000) return padLeft(v, 3);
+  if (v < 1000) return padLeft(v, 3, "0");
   String n = String("+");
-  n += String(padLeft(v % 1000, 2));
+  n += String(padLeft(v % 1000, 2, "0"));
   return n;
 }
 
-String padLeft(int number, int padding) {
+String formatPercent(float v, int padding) {
+  String n = String("");
+  n += String(padLeft(v, padding, " "));
+  return n + "%";
+}
+
+String formatShifts(int v, int padding) {
+  String n = String("");
+  n += String(padLeft(v, padding, " "));
+  return n;
+}
+
+String formatTime(unsigned long v, int padding) {
+  String n = String("");
+  n += String(padLeft(v, padding, " "));
+  return n;
+}
+
+String padLeft(int number, int padding, char* pad) {
   String n = String(number);
   int currentMax = 10;
   for (int i=1; i<padding; i++){
     if (number < currentMax) {
-      n = "0" + n;
+      n = pad + n;
     }
     currentMax *= 10;
   }

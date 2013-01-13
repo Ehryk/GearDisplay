@@ -12,6 +12,7 @@ boolean readEEPROM() {
   enableLog = EEPROM.read(eepromEnableLog);
   toleranceInterval = EEPROM.read(eepromToleranceInterval);
   brightness = EEPROM.read(eepromBrightness);
+  accent = EEPROM.read(eepromAccent);
 }
 
 void writeEEPROM() {
@@ -26,6 +27,7 @@ void writeEEPROM() {
   EEPROM.write(eepromLED, led);
   EEPROM.write(eepromToleranceInterval, toleranceInterval);
   EEPROM.write(eepromBrightness, brightness);
+  EEPROM.write(eepromAccent, accent);
   
   eepromLastUpdated = millis();
   eepromUpdateNeeded = false; 
@@ -36,7 +38,7 @@ void readLog() {
   lifeTimeInGear[0] = readULongEEPROM(eepromLogGearTime[0]);
   for(int g = 0; g < gears; g++) {
     lifeTimeInGear[g + 1] = readULongEEPROM(eepromLogGearTime[g + 1]);
-    lifeShiftsToGear[g] = readULongEEPROM(eepromLogShiftCount[g]);
+    lifeShiftsToGear[g] = readUIntEEPROM(eepromLogShiftCount[g]);
   }
 }
 
@@ -45,9 +47,18 @@ void writeLog() {
   writeULongEEPROM(eepromLogGearTime[0], lifeTimeInGear[0]);
   for(int g = 0; g < gears; g++) {
     writeULongEEPROM(eepromLogGearTime[g + 1], lifeTimeInGear[g + 1]);
-    writeULongEEPROM(eepromLogShiftCount[g], lifeShiftsToGear[g]);
+    writeUIntEEPROM(eepromLogShiftCount[g], lifeShiftsToGear[g]);
   }
   logRefreshed = millis();
+}
+
+unsigned long readUIntEEPROM(int address) {
+  return EEPROM.read(address)*256 + EEPROM.read(address+1);
+}
+
+void writeUIntEEPROM(int address, unsigned int v) {
+  EEPROM.write(address, (v / 256) % 256);
+  EEPROM.write(address + 1, v % 256);
 }
 
 unsigned long readULongEEPROM(int address) {

@@ -42,7 +42,9 @@ int logMode = 0; //Which log mode is selected
 int screenMode = 0; //Which 'version' of a given screen is being displayed
 int brightness = 255; //LCD Brightness
 int brightnessInterval = 15; //LCD Brightness Increment to increase/decrease by
-char separator = '-'; //Surrounds gear char
+char accent = 0; //Surrounds gear char
+char accents[5] = {'-', '*', '.', '~', '='};
+int ACCENT_COUNT = 5;
 int gear = -2; //Which gear is active, if any. 0 = Neutral.
 int baseline = 0; //The baseline from which any gear out of tolerance from is considered engaged
 int tolerance; //How much a gear can vary from the baseline before considered engaged
@@ -60,7 +62,7 @@ int debugInterval = 1000; //How often to refresh the serial port, in millisecond
 
 //These are addresses in the EEPROM for persistent storage
 boolean enableEEPROM = true; //Uses EEPROM
-boolean clearEEPROM = true; // -- SET TO TRUE ONLY WHEN ADDRESSES CHANGE, or to reset EEPROM to defaults --
+boolean clearEEPROM = false; // -- SET TO TRUE ONLY WHEN ADDRESSES CHANGE, or to reset EEPROM to defaults --
 int eepromSet = 0;
 int eepromMode = 1;
 int eepromMethod = 2;
@@ -71,6 +73,7 @@ int eepromEnableLog = 7;
 int eepromToleranceInterval = 8;
 int eepromDebug = 9;
 int eepromBrightness = 10;
+int eepromAccent = 11;
 boolean eepromUpdateNeeded = false;
 unsigned long eepromLastUpdated = 0;
 int eepromInterval = 10000; //How often to wait after a change to write to EEPROM

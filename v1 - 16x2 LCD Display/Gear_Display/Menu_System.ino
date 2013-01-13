@@ -24,9 +24,9 @@ It has two submenus, Menu and Log
 void updateDisplay(int mode, int gear) {
   switch(mode) {
     case MODE_BASIC: writeBasic(gear, ' '); break;
-    case MODE_BASIC_S: writeBasic(gear, separator); break;
+    case MODE_BASIC_S: writeBasic(gear, accentChar(accent)); break;
     case MODE_ADVANCED: writeAdvanced(gear, ' '); break;
-    case MODE_ADVANCED_S: writeAdvanced(gear, separator); break;
+    case MODE_ADVANCED_S: writeAdvanced(gear, accentChar(accent)); break;
     case MODE_VARIABLES_V: writeVariables(gear, true); break;
     case MODE_VARIABLES: writeVariables(gear, false); break;
     case MODE_VOLTAGES: writeVoltages(); break;
@@ -124,7 +124,7 @@ void writeVariables(int g, boolean voltage) {
   }
   else {
     lcd.print("T:");
-    lcd.print(padLeft(tolerance, 3));
+    lcd.print(formatValue(tolerance));
   }
   
   //Print Debug

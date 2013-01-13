@@ -8,16 +8,15 @@ It provides the ability to change variables and affect system operation
 #define MENU_LED 1
 #define MENU_BRIGHTNESS 2
 #define MENU_TOLERANCE_INTERVAL 3
-#define MENU_LOGGING 4
-#define MENU_DEBUG 5
-#define MENU_VOLTAGES 6
-#define MENU_VALUES 7
-#define MENU_EXIT 8
+#define MENU_SEPARATOR 4
+#define MENU_LOGGING 5
+#define MENU_DEBUG 6
+#define MENU_VOLTAGES 7
+#define MENU_VALUES 8
+#define MENU_EXIT 9
 
 #define MENU_BEGIN 0
-#define MENU_END 8
-
-
+#define MENU_END 9
 
 void writeMenu(int menuScreen) {
   if (!inMenu) writePrompt("ENTER MENU:");
@@ -27,6 +26,7 @@ void writeMenu(int menuScreen) {
       case MENU_LED: writeMenuLED(); break;
       case MENU_BRIGHTNESS: writeMenuBrightness(); break;
       case MENU_TOLERANCE_INTERVAL: writeMenuToleranceInterval(); break;
+      case MENU_SEPARATOR: writeMenuSeparator(); break;
       case MENU_LOGGING: writeMenuLogging(); break;
       case MENU_DEBUG: writeMenuDebug(); break;
       case MENU_VOLTAGES: writeVoltages(); break;
@@ -42,7 +42,7 @@ void writeMenuMethod() {
   
   lcd.setCursor(0, 1);
   switch(method) {
-    case MEAN_BASED:          lcd.print("Mean Based (Avg)"); break;
+    case MEAN_BASED:          lcd.print("Mean (Default)  "); break;
     case TRIM1_MEAN:          lcd.print("Trim 1 - Mean   "); break;
     case TRIM1_THEORETICAL:   lcd.print("Trim 1 - Theory"); break;
     case TRIM1_HIGHEST:       lcd.print("Trim 1 - Highest"); break;
@@ -77,12 +77,12 @@ void writeMenuBrightness() {
   
   lcd.setCursor(0, 1);
   lcd.print("V:");
-  lcd.print(brightness);
+  lcd.print(padLeft(brightness, 3, " "));
   
   lcd.setCursor(8, 1);
   lcd.print("(");
-  lcd.print(brightness/255 * 100);
-  lcd.print("%)");
+  lcd.print(formatPercent((float)brightness/255 * 100, 2));
+  lcd.print(")");
 }
 
 void writeMenuToleranceInterval() {
@@ -90,12 +90,38 @@ void writeMenuToleranceInterval() {
   lcd.print("Toler. Interval:");
   
   lcd.setCursor(0, 1);
-  lcd.print(padLeft(toleranceInterval, 3));
+  lcd.print(padLeft(toleranceInterval, 3, " "));
   
   lcd.setCursor(5, 1);
   lcd.print("(");
-  lcd.print(toVoltage(toleranceInterval), 2);
+  lcd.print(toVoltage(toleranceInterval), 4);
   lcd.print("V)");
+}
+
+void writeMenuSeparator() {
+  lcd.setCursor(0, 0);
+  lcd.print("Accent Char: ");
+  lcd.print(accentChar(accent));
+  
+  lcd.setCursor(0, 1);
+  lcd.print(accentChar(accent));
+  lcd.print('N');
+  lcd.print(accentChar(accent));
+  lcd.print(" ");
+  
+  lcd.print(accentChar(accent));
+  lcd.print('1');
+  lcd.print(accentChar(accent));
+  lcd.print(" ");
+  
+  lcd.print(accentChar(accent));
+  lcd.print('4');
+  lcd.print(accentChar(accent));
+  lcd.print(" ");
+  
+  lcd.print(accentChar(accent));
+  lcd.print('R');
+  lcd.print(accentChar(accent));
 }
 
 void writeMenuLogging() {
@@ -149,6 +175,11 @@ void menuUpPressed() {
         eepromUpdateNeeded = true;
       }
       break;
+    case MENU_SEPARATOR:
+      accent++;
+      if (accent > ACCENT_COUNT) accent = 0;
+      eepromUpdateNeeded = true;
+      break;
     case MENU_LOGGING: 
       enableLog = !enableLog;
       eepromUpdateNeeded = true;
@@ -186,6 +217,11 @@ void menuDownPressed() {
         toleranceInterval--;
         eepromUpdateNeeded = true;
       }
+      break;
+    case MENU_SEPARATOR:
+      accent--;
+      if (accent < 0) accent = ACCENT_COUNT;
+      eepromUpdateNeeded = true;
       break;
     case MENU_LOGGING: 
       enableLog = !enableLog;
