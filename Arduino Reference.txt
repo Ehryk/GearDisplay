@@ -1,0 +1,26 @@
+This is just my reference for Arduino information
+==========
+
+PWM (Pulse Width Modulation)
+Pins 3, 5, 6, 9, 10, 11
+
+Digital Pins have internal pull-up resistors only (20k Ohm)
+Pin 13: LED (1k Ohm Resistor)
+
+Serial communication:
+Pin 0: Rx
+Pin 1: Tx
+
+I2C (Inter-Integrated Circuit, Two-wire Interface)
+Pin A5: SCL (Serial Clock)
+Pin A4: SDA (Serial Data Line)
+
+Hardware SPI (Serial Peripheral Interface, Four-wire Interface)
+Pin 13: SCK/SCLK (Serial Clock (output from master))
+Pin 12: MISO/DO (Master Input, Slave Output (output from slave))
+Pin 11: MOSI/DI (Master Output, Slave Input (input from slave))
+Pin 10: SS (Slave Select) (recommended)
+
+LEDs:
+- Cathode - Shorter Leg, Flat Side
++ Anode - Longer Leg, Round Side
