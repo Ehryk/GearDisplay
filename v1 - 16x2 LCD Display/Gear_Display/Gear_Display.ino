@@ -268,6 +268,8 @@ void loop() {
   if (led == LED_IN_GEAR && inGear) digitalWrite(ledPin, HIGH);
   else if (led == LED_NEUTRAL && !inGear) digitalWrite(ledPin, HIGH);
   else digitalWrite(ledPin, LOW);
+  //Handle LCD Brightness
+  digitalWrite(lcdBrightness, brightness);
   
   //This saves all values to EEPROM, if the eeprom interval (in ms) has passed AND change has been made
   if (enableEEPROM && eepromUpdateNeeded && millis() - eepromLastUpdated > eepromInterval) writeEEPROM();
