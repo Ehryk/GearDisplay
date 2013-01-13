@@ -6,6 +6,7 @@ Ehryk Menze
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
 
+#define METHOD_BEGIN 0
 #define MEAN_BASED 0
 #define TRIM1_MEAN 1
 #define TRIM1_THEORETICAL 2
@@ -18,6 +19,59 @@ Ehryk Menze
 #define THEORETICAL 9
 #define LOW_BASED 10
 #define HIGH_BASED 11
+#define METHOD_END 11
+
+#define LED_BEGIN 0
+#define LED_OFF 0
+#define LED_IN_GEAR 1
+#define LED_NEUTRAL 2
+#define LED_END 2
+
+#define MODE_BEGIN 0
+#define MODE_BASIC 0
+#define MODE_BASIC_S 1
+#define MODE_ADVANCED 2
+#define MODE_ADVANCED_S 3
+#define MODE_VARIABLES_V 4
+#define MODE_VARIABLES 5
+#define MODE_VOLTAGES 6
+#define MODE_VALUES 7
+#define MODE_FILL 8
+#define MODE_MENU 9
+#define MODE_LOG 10
+#define MODE_CREDITS 11
+#define MODE_DISPLAY_OFF 12
+#define MODE_END 12
+
+#define MENU_BEGIN 0
+#define MENU_METHOD 0
+#define MENU_LED 1
+#define MENU_LOGGING 2
+#define MENU_TOLERANCE_INTERVAL 3
+#define MENU_DEBUG 4
+#define MENU_VOLTAGES 5
+#define MENU_VALUES 6
+#define MENU_EXIT 7
+#define MENU_END 7
+
+#define LOG_BEGIN 0
+#define LOG_HIGHWAY_CITY 0
+#define LOG_HIGHWAY_CITY_T 1
+#define LOG_HIGHWAY_CITY_PERCENT 2
+#define LOG_HIGHWAY_CITY_PERCENT_T 3
+#define LOG_UP_TIME 4
+#define LOG_SHIFT_COUNT 5
+#define LOG_SHIFT_COUNT_T 6
+#define LOG_NEUTRAL 7
+#define LOG_NEUTRAL_T 8
+#define LOG_NEUTRAL_PERCENT 9
+#define LOG_NEUTRAL_PERCENT_T 10
+#define LOG_GEAR_TIME 11
+#define LOG_GEAR_TIME_T 12
+#define LOG_GEAR_PERCENT 13
+#define LOG_GEAR_PERCENT_T 14
+#define LOG_EXIT 15
+#define LOG_END 15
 
 //Set up LCD pins for 4 bit mode
 int lcdRS = 9;
@@ -84,33 +138,65 @@ int theoretical = 511; //This is what should be read by the ideal Hall Effect Se
 int numberActive = -2; //Number of gears engaged
 int method = MEAN_BASED; //Method of determining gear engagement
 int mode = 0; //Which display mode is selected
+boolean saveMode = true; //Persists mode across power cycles
+boolean inMenu = false; //Whether the user is in the menu system
+int menuMode = 0; //Which menu mode is selected
+boolean inLog = false; //Whether the user is in the log system
+int logMode = 0; //Which log mode is selected
+int brightness = 255; //LCD Brightness
+char separator = '-'; //Surrounds gear char
 int gear = -2; //Which gear is active, if any. 0 = Neutral.
 int baseline = 0; //The baseline from which any gear out of tolerance from is considered engaged
 int tolerance; //How much a gear can vary from the baseline before considered engaged
 int toleranceInterval = 5; //How much to vary the tolerance on a single press
 boolean inGear = false; //Whether or not the vehicle is in a gear
-boolean led = true; //Whether or not to light the LED when a gear is engaged
+int led = LED_IN_GEAR; //Whether or not to light the LED when a gear is engaged, neutral, or off
+int baud = 9600; //Used for Serial communication
+int defaultTolerance = 200; //Initial Tolerance
+unsigned long lastLoopStart = 0;
 
 //Debugging
 boolean debug = true;
 unsigned long debugRefresh = 0;
-int refreshInterval = 1000; //How often to refresh the serial port, in milliseconds
+int debugInterval = 1000; //How often to refresh the serial port, in milliseconds
 
 //These are addresses in the EEPROM for persistent storage
+boolean enableEEPROM = true; //Uses EEPROM
+boolean clearEEPROM = true; // -- SET TO TRUE ONLY WHEN ADDRESSES CHANGE, or to reset EEPROM to defaults --
 int eepromSet = 0;
 int eepromMode = 1;
 int eepromMethod = 2;
-int eepromTolerance[2] = {4, 5};
-int eepromDebug = 6;
-int eepromLED = 7;
+int eepromSaveMode = 3;
+int eepromTolerance = 4;
+int eepromLED = 6;
+int eepromEnableLog = 7;
 int eepromToleranceInterval = 8;
+int eepromDebug = 9;
+int eepromBrightness = 10;
 boolean eepromUpdateNeeded = false;
 unsigned long eepromLastUpdated = 0;
+int eepromInterval = 10000; //How often to wait after a change to write to EEPROM
 
-//Parameters
-int baud = 9600;
-int defaultTolerance = 200;
+//Logging
+boolean enableLog = true;
+boolean clearLog = false; // -- SET TO TRUE ONLY WHEN ADDRESSES CHANGE, or to reset persistent log  --
+//Log Times in tenths of a second
+unsigned long timeInGear[1 + 6]; //0 for Neutral, 1-R
+unsigned long upTime = 0; //Time the unit has been on, persisting between power cycles
+unsigned int shiftsToGear[6]; //Transitions from Neutral to a gear, 1-R
+unsigned long lifeTimeInGear[1 + 6]; //Life Time persists across power cycles
+unsigned long lifeUpTime = 0; //Life Time persists across power cycles
+unsigned int lifeShiftsToGear[6]; //Life Shifts persists across power cycles
+unsigned long logRefreshed = 0; //Time since log values last saved to EEPROM
+int logInterval = 30000; //How often to refresh the serial port, in milliseconds
+//-- EEPROM LOG ADDRESSES BASED ON START ADDRESS --
+//Move the start address if EEPROM gets worn at the given start address
+int eepromLogStartAddress = 128;
+int eepromLogGearTime[1 + 6] = { eepromLogStartAddress, eepromLogStartAddress + 4, eepromLogStartAddress + 8, eepromLogStartAddress + 12, eepromLogStartAddress + 16, eepromLogStartAddress + 20, eepromLogStartAddress + 24};
+int eepromLogUpTime = eepromLogStartAddress + 28;
+int eepromLogShiftCount[6] = {eepromLogStartAddress + 32, eepromLogStartAddress + 34, eepromLogStartAddress + 36, eepromLogStartAddress + 38, eepromLogStartAddress + 40, eepromLogStartAddress + 42};
 
+//setup() gets called once at power on/reset of Arduino
 void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(baud);
@@ -136,182 +222,73 @@ void setup() {
   lcd.createChar(4, fourColon);
   lcd.createChar(2, tColon);
   
-  readEEPROM();
-   
+  tolerance = defaultTolerance;
+  
+  if (enableLog) {
+    timeInGear[0] = 0;
+    for (int g = 0; g < gears; g++) {
+      timeInGear[g + 1] = 0;
+      shiftsToGear[g] = 0;
+    }
+  }
+  
+  if (clearEEPROM) EEPROM.write(0, 0);
+  if (enableEEPROM) readEEPROM();
+  if (enableLog && !clearLog) readLog();
+  
   writeCredits();
   delay(1500);
   lcd.clear();
+  
+  lastLoopStart = millis();
 }
 
-boolean checkPress(int pin) {
-  return digitalRead(pin) == LOW && debounce(pin, LOW, 20, 6);
-}
-
+//loop() gets called repeatedly for the duration of power
 void loop() {
-  // put your main code here, to run repeatedly:
-  //Check for Mode Press
-  if (checkPress(modePin)) {
-    mode++;
-    if (mode > 12) mode = 0;
-    delay(100);
-    lcd.clear();
-  }
-  else if (checkPress(upPin)) {
-    if (mode == 7) { //Method Menu
-      method++;
-      if (method > HIGH_BASED) method = MEAN_BASED;
-      eepromUpdateNeeded = true;
-    }
-    else if (mode == 8) { //LED Menu
-      led = !led;
-      eepromUpdateNeeded = true;
-    }
-    else if (mode == 9 && toleranceInterval < 255) { //Tolerance Interval Menu
-      toleranceInterval++;
-      eepromUpdateNeeded = true;
-    }
-    else if (mode == 10) { //Debug Menu
-      debug = !debug;
-      eepromUpdateNeeded = true;
-    }
-    else if (tolerance < 1023 - toleranceInterval) {
-      tolerance += toleranceInterval;
-      eepromUpdateNeeded = true;
-    }
-  }
-  else if (checkPress(downPin) && tolerance > 0) {
-    if (mode == 7) { //Method Menu
-      method--;
-      if (method < MEAN_BASED) method = HIGH_BASED;
-      eepromUpdateNeeded = true;
-    }
-    else if (mode == 8) { //LED Menu
-      led = !led;
-      eepromUpdateNeeded = true;
-    }
-    else if (mode == 9 && toleranceInterval > 1) { //Tolerance Interval Menu
-      toleranceInterval--;
-      eepromUpdateNeeded = true;
-    }
-    else if (mode == 10) { //Debug Menu
-      debug = !debug;
-      eepromUpdateNeeded = true;
-    }
-    else if (tolerance > toleranceInterval) {
-      tolerance -= toleranceInterval;
-      eepromUpdateNeeded = true;
-    }
-  }
+  //Loop Timing
+  unsigned long loopTime = millis() - lastLoopStart;
+  if (millis() < lastLoopStart) loopTime = 0; //millis() overflow, ~70 days 
+  lastLoopStart = millis();
+  
+  handleButtons();
   
   //Update the value variables
   readValues();
   baseline = computeBaseline(method);
   numberActive = countActive();
+  int previousGear = gear;
   gear = activeGear();
   inGear = gear > 0;
-  if (led && inGear) digitalWrite(ledPin, HIGH);
+  
+  //Handle LED
+  if (led == LED_IN_GEAR && inGear) digitalWrite(ledPin, HIGH);
+  else if (led == LED_NEUTRAL && !inGear) digitalWrite(ledPin, HIGH);
   else digitalWrite(ledPin, LOW);
   
-  //This saves all values to EEPROM, if ten seconds have passed since a change has been made
-  if (eepromUpdateNeeded && millis() - eepromLastUpdated > 10000) writeEEPROM();
+  //This saves all values to EEPROM, if the eeprom interval (in ms) has passed AND change has been made
+  if (enableEEPROM && eepromUpdateNeeded && millis() - eepromLastUpdated > eepromInterval) writeEEPROM();
+  
+  if (enableLog) {
+    if (previousGear == gear) { //Remained in a gear (or neutral)
+      timeInGear[gear] += loopTime / 100; //Store in tenths
+      lifeTimeInGear[gear] += loopTime / 100;
+    }
+    upTime += loopTime / 100; //Loop success, increment uptime
+    lifeUpTime += loopTime / 100;
+    if (previousGear == 0 && inGear) { //Shifted into a gear from Neutral
+      shiftsToGear[gear - 1]++;
+      lifeShiftsToGear[gear - 1]++;
+    }
+  }
+  
+  //This writes the Log values, if the log interval (in ms) has passed
+  if (enableLog && millis() - logRefreshed > logInterval) writeLog();
   
   //This rereads in the case of an error or fault
   //(doesn't display errors, leaves last displayed values)
   if (!debug && gear < 0) return;
   
-  if (debug && millis() - debugRefresh > refreshInterval) {
-    Serial.print("Mode: ");
-    Serial.println(mode);
-    
-    Serial.print("Baseline: ");
-    Serial.print(baseline);
-    Serial.print(" (");
-    Serial.print(formatValue(baseline));
-    Serial.print(") ");
-    Serial.print(toVoltage(baseline));
-    Serial.println("V");
-    
-    Serial.print("Tolerance: ");
-    Serial.print(tolerance);
-    Serial.print(" ");
-    Serial.print(toVoltage(tolerance));
-    Serial.println("V");
-    
-    Serial.print("In Gear: ** ");
-    Serial.print(gearName(gear));
-    Serial.print(" (");
-    Serial.print(gearChar(gear));
-    Serial.println(") **");
-    
-    if (inGear) {
-      Serial.print(" - Active Gear: ");
-      Serial.print(activeValue());
-      Serial.print(" ");
-      Serial.print(activeVoltage());
-      Serial.println("V");
-      Serial.print(" - Differential: ");
-      Serial.println(abs(activeValue() - baseline));
-    }
-    else {
-      Serial.println(" - Active Gear: N/A");
-      Serial.println(" - Differential: N/A");
-    }
-    
-    Serial.print("Gear 1: ");
-    Serial.print(values[0]);
-    Serial.print(" (");
-    Serial.print(formatValue(values[0]));
-    Serial.print(") ");
-    Serial.print(toVoltage(values[0]));
-    Serial.println("V");
-    
-    Serial.print("Gear 2: ");
-    Serial.print(values[1]);
-    Serial.print(" (");
-    Serial.print(formatValue(values[1]));
-    Serial.print(") ");
-    Serial.print(toVoltage(values[1]));
-    Serial.println("V");
-    
-    Serial.print("Gear 3: ");
-    Serial.print(values[2]);
-    Serial.print(" (");
-    Serial.print(formatValue(values[2]));
-    Serial.print(") ");
-    Serial.print(toVoltage(values[2]));
-    Serial.println("V");
-    
-    Serial.print("Gear 4: ");
-    Serial.print(values[3]);
-    Serial.print(" (");
-    Serial.print(formatValue(values[3]));
-    Serial.print(") ");
-    Serial.print(toVoltage(values[3]));
-    Serial.println("V");
-    
-    Serial.print("Gear 5: ");
-    Serial.print(values[4]);
-    Serial.print(" (");
-    Serial.print(formatValue(values[4]));
-    Serial.print(") ");
-    Serial.print(toVoltage(values[4]));
-    Serial.println("V");
-    
-    Serial.print("Gear R: ");
-    Serial.print(values[5]);
-    Serial.print(" (");
-    Serial.print(formatValue(values[5]));
-    Serial.print(") ");
-    Serial.print(toVoltage(values[5]));
-    Serial.println("V");
-    
-    Serial.print("Standard Deviation: ");
-    Serial.println(getStandardDeviation(baseline));
-    
-    Serial.println();
-    
-    debugRefresh = millis();
-  }
+  if (debug && millis() - debugRefresh > debugInterval) writeDebug(loopTime);
   
   //Update the display
   updateDisplay(mode, gear);
@@ -492,28 +469,76 @@ char gearChar(int g) {
 
 void updateDisplay(int mode, int gear) {
   switch(mode) {
-    case 0: writeBasic(gear); break;
-    case 1: writeAdvanced(gear); break;
-    case 2: writeVariables(gear, true); break;
-    case 3: writeVariables(gear, false); break;
-    case 4: writeValues(); break;
-    case 5: writeVoltages(); break;
-    case 6: writeFill(gearChar(gear)); break;
-    case 7: writeMenuMethod(); break;
-    case 8: writeMenuLED(); break;
-    case 9: writeMenuToleranceInterval(); break;
-    case 10: writeMenuDebug(); break;
-    case 11: writeCredits(); break;
-    case 12: break;
+    case MODE_BASIC: writeBasic(gear, ' '); break;
+    case MODE_BASIC_S: writeBasic(gear, separator); break;
+    case MODE_ADVANCED: writeAdvanced(gear, ' '); break;
+    case MODE_ADVANCED_S: writeAdvanced(gear, separator); break;
+    case MODE_VARIABLES_V: writeVariables(gear, true); break;
+    case MODE_VARIABLES: writeVariables(gear, false); break;
+    case MODE_VOLTAGES: writeVoltages(); break;
+    case MODE_VALUES: writeValues(); break;
+    case MODE_FILL: writeFill(gearChar(gear)); break;
+    case MODE_MENU: writeMenu(menuMode); break;
+    case MODE_LOG: writeLog(logMode); break;
+    case MODE_CREDITS: writeCredits(); break;
+    case MODE_DISPLAY_OFF: break;
   }
 }
 
-void writeBasic(int g) {
+void writeMenu(int menuScreen) {
+  if (!inMenu) writePrompt("ENTER MENU:");
+  else {
+    switch (menuScreen) {
+      case MENU_METHOD: writeMenuMethod(); break;
+      case MENU_LED: writeMenuLED(); break;
+      case MENU_LOGGING: writeMenuLogging(); break;
+      case MENU_TOLERANCE_INTERVAL: writeMenuToleranceInterval(); break;
+      case MENU_DEBUG: writeMenuDebug(); break;
+      case MENU_VOLTAGES: writeVoltages(); break;
+      case MENU_VALUES: writeValues(); break;
+      case MENU_EXIT: writePrompt("EXIT MENU:"); break;
+    }
+  }
+}
+
+void writeLog(int logScreen) {
+  if (!inLog) writePrompt("ENTER LOG:");
+  else {
+    switch (logScreen) {
+      case LOG_HIGHWAY_CITY: writeLogHwyCity(600, 'm', false); break;
+      case LOG_HIGHWAY_CITY_T: writeLogHwyCity(36000, 'h', true); break;
+      case LOG_HIGHWAY_CITY_PERCENT: writeLogHwyCity(-1, '%', false); break;
+      case LOG_HIGHWAY_CITY_PERCENT_T: writeLogHwyCity(-1, '%', true); break;
+      case LOG_UP_TIME: writeLogUpTime(36000, 'h'); break;
+      case LOG_SHIFT_COUNT: writeLogShifts(false); break;
+      case LOG_SHIFT_COUNT_T: writeLogShifts(true); break;
+      case LOG_NEUTRAL: writeLogNeutral(600, 'm', false); break;
+      case LOG_NEUTRAL_T: writeLogNeutral(36000, 'h', true); break;
+      case LOG_NEUTRAL_PERCENT: writeLogNeutral(-1, '%', false); break;
+      case LOG_NEUTRAL_PERCENT_T: writeLogNeutral(-1, '%', true); break;
+      case LOG_GEAR_TIME: writeLogGearTime(600, 'm', false); break;
+      case LOG_GEAR_TIME_T: writeLogGearTime(36000, 'h', true); break;
+      case LOG_GEAR_PERCENT: writeLogGearPercent(false); break;
+      case LOG_GEAR_PERCENT_T: writeLogGearPercent(true); break;
+      case LOG_EXIT: writePrompt("EXIT LOG:"); break;
+    }
+  }
+}
+
+void writePrompt(char* title) {
+  lcd.setCursor(0, 0);
+  lcd.print(title);
+  
+  lcd.setCursor(0, 1);
+  lcd.print("Press + or -");
+}
+
+void writeBasic(int g, char s) {
   //Print Gear Char
   lcd.setCursor(1, 0);
-  lcd.print('.');
+  lcd.print(s);
   lcd.print(gearChar(g));
-  lcd.print('.');
+  lcd.print(s);
   
   lcd.setCursor(9, 0);
   lcd.print(" Gear");
@@ -526,10 +551,12 @@ void writeBasic(int g) {
   lcd.print("Display");
 }
 
-void writeAdvanced(int g) {
+void writeAdvanced(int g, char s) {
   //Print Gear Char
-  lcd.setCursor(2, 0);
+  lcd.setCursor(1, 0);
+  lcd.print(s);
   lcd.print(gearChar(g));
+  lcd.print(s);
   
   //Print Gear Voltage
   lcd.setCursor(9, 0);
@@ -676,18 +703,28 @@ void writeMenuMethod() {
   }
 }
 
-void writeMenuLED() {
+void writeMenuLogging() {
   lcd.setCursor(0, 0);
-  lcd.print("In Gear LED:");
+  lcd.print("Logging:");
   
   lcd.setCursor(0, 1);
-  if (led) lcd.print("ON ");
+  if (enableLog) lcd.print("ON ");
   else lcd.print("OFF");
+}
+
+void writeMenuLED() {
+  lcd.setCursor(0, 0);
+  lcd.print("LED:");
+  
+  lcd.setCursor(0, 1);
+  if (led == LED_IN_GEAR) lcd.print("ON - In Gear");
+  else if (led == LED_NEUTRAL) lcd.print("ON - Neutral");
+  else lcd.print("OFF         ");
 }
 
 void writeMenuToleranceInterval() {
   lcd.setCursor(0, 0);
-  lcd.print("T Interval:");
+  lcd.print("Toler. Interval:");
   
   lcd.setCursor(0, 1);
   lcd.print(padLeft(toleranceInterval, 3));
@@ -707,12 +744,306 @@ void writeMenuDebug() {
   else lcd.print("OFF");
 }
 
+void writeLogHwyCity(int divisor, char unit, boolean lifeTime) {
+  //Highway = In Fifth Gear
+  //City = In any other gear but Fifth
+  float city = 0;
+  float highway = 0;
+  if (lifeTime) {
+    for (int g = 1; g < gears + 1; g++) {
+      if (g != 5) city += lifeTimeInGear[g];
+    }
+    highway = lifeTimeInGear[5];
+  }
+  else {
+    for (int g = 1; g < gears + 1; g++) {
+      if (g != 5) city += timeInGear[g];
+    }
+    highway = timeInGear[5];
+  }
+  
+  lcd.setCursor(0, 0);
+  if (lifeTime) lcd.print("T ");
+  lcd.print("City:   ");
+  if (divisor > 0) lcd.print(city / divisor, 2);
+  else lcd.print(city / (city + highway) * 100, 1);
+  lcd.print(unit);
+  
+  lcd.setCursor(0, 1);
+  if (lifeTime) lcd.print("T ");
+  lcd.print("Highway:");
+  if (divisor > 0) lcd.print(highway / divisor, 2);
+  else lcd.print(highway / (city + highway) * 100, 1);
+  lcd.print(unit);
+}
+
+void writeLogUpTime(int divisor, char unit) {
+  float up = upTime / divisor;
+  float life = lifeUpTime / divisor;
+  
+  lcd.setCursor(0, 0);
+  lcd.print("Up Time: ");
+  lcd.print(up, 2);
+  lcd.print(unit);
+  
+  lcd.setCursor(0, 1);
+  lcd.print("Life:    ");
+  lcd.print(life, 2);
+  lcd.print(unit);
+}
+
+void writeLogShifts(boolean lifeTime) {
+  lcd.setCursor(0, 0);
+  lcd.write((byte)1);
+  if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[0], 3));
+  else lcd.print(padLeft(shiftsToGear[0], 3));
+  lcd.print(" ");
+  
+  lcd.print("2:");
+  if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[1], 3));
+  else lcd.print(padLeft(shiftsToGear[1], 3));
+  lcd.print(" ");
+  
+  lcd.print("3:");
+  if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[2], 3));
+  else lcd.print(padLeft(shiftsToGear[2], 3));
+  
+  lcd.setCursor(0, 1);
+  lcd.write((byte)4);
+  if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[3], 3));
+  else lcd.print(padLeft(shiftsToGear[3], 3));
+  lcd.print(" ");
+  
+  lcd.print("5:");
+  if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[4], 3));
+  else lcd.print(padLeft(shiftsToGear[4], 3));
+  lcd.print(" ");
+  
+  lcd.print("R:");
+  if (lifeTime) lcd.print(padLeft(lifeShiftsToGear[5], 3));
+  else lcd.print(padLeft(shiftsToGear[5], 3));
+}
+
+void writeLogGearTime(int divisor, char unit, boolean lifeTime) {
+  lcd.setCursor(0, 0);
+  lcd.write((byte)1);
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[1] / divisor, 2));
+  else lcd.print(padLeft(timeInGear[1] / divisor, 2));
+  lcd.print(unit);
+  lcd.print(" ");
+  
+  lcd.print("2:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[2] / divisor, 2));
+  else lcd.print(padLeft(timeInGear[2] / divisor, 2));
+  lcd.print(unit);
+  lcd.print(" ");
+  
+  lcd.print("3:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[3] / divisor, 2));
+  else lcd.print(padLeft(timeInGear[3] / divisor, 2));
+  lcd.print(unit);
+  
+  lcd.setCursor(0, 1);
+  lcd.write((byte)4);
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[4] / divisor, 2));
+  else lcd.print(padLeft(timeInGear[4] / divisor, 2));
+  lcd.print(unit);
+  lcd.print(" ");
+  
+  lcd.print("5:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[5] / divisor, 2));
+  else lcd.print(padLeft(timeInGear[5] / divisor, 2));
+  lcd.print(unit);
+  lcd.print(" ");
+  
+  lcd.print("R:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[6] / divisor, 2));
+  else lcd.print(padLeft(timeInGear[6] / divisor, 2));
+  lcd.print(unit);
+}
+
+void writeLogGearPercent(boolean lifeTime) {
+  unsigned long total;
+  for (int g = 0; g < gears + 1; g++) {
+    if (lifeTime) total += lifeTimeInGear[g];
+    else total += timeInGear[g];
+  }
+  
+  lcd.setCursor(0, 0);
+  lcd.write((byte)1);
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[1] / total, 2));
+  else lcd.print(padLeft(timeInGear[1] / total * 100, 0));
+  lcd.print("% ");
+  
+  lcd.print("2:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[2] / total, 2));
+  else lcd.print(padLeft(timeInGear[2] / total * 100, 0));
+  lcd.print("% ");
+  
+  lcd.print("3:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[3] / total, 2));
+  else lcd.print(padLeft(timeInGear[3] / total * 100, 0));
+  lcd.print("%");
+  
+  lcd.setCursor(0, 1);
+  lcd.write((byte)4);
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[4] / total, 2));
+  else lcd.print(padLeft(timeInGear[4] / total * 100, 0));
+  lcd.print("% ");
+  
+  lcd.print("5:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[5] / total, 2));
+  else lcd.print(padLeft(timeInGear[5] / total * 100, 0));
+  lcd.print("% ");
+  
+  lcd.print("R:");
+  if (lifeTime) lcd.print(padLeft(lifeTimeInGear[6] / total, 2));
+  else lcd.print(padLeft(timeInGear[6] / total * 100, 0));
+  lcd.print("%");
+}
+
+void writeLogNeutral(int divisor, char unit, boolean lifeTime) {
+  float gearTime = 0;
+  float neutralTime = 0;
+  if (lifeTime) {
+    for (int g = 1; g < gears + 1; g++) {
+      gearTime += lifeTimeInGear[g];
+    }
+    neutralTime = lifeTimeInGear[0];
+  }
+  else {
+    for (int g = 1; g < gears + 1; g++) {
+      gearTime += timeInGear[g];
+    }
+    neutralTime = timeInGear[0];
+  }
+  
+  lcd.setCursor(0, 0);
+  if (lifeTime) lcd.print("T ");
+  lcd.print("In Gear: ");
+  if (divisor > 0) lcd.print(gearTime / divisor, 2);
+  else lcd.print(gearTime / (gearTime + neutralTime) * 100, 1);
+  lcd.print(unit);
+  
+  lcd.setCursor(0, 1);
+  if (lifeTime) lcd.print("T ");
+  lcd.print("Neutral: ");
+  if (divisor > 0) lcd.print(neutralTime / divisor, 2);
+  else lcd.print(neutralTime / (gearTime + neutralTime) * 100, 1);
+  lcd.print(unit);
+}
+
 void writeCredits() {
   lcd.setCursor(0, 0);
   lcd.print("- Gear Display -");
   
   lcd.setCursor(0, 1);
   lcd.print("By Eric C Menze.");
+}
+
+void handleButtons() {
+  //Check for Mode Press
+  if (checkPress(modePin)) {
+    if (inMenu) {
+      menuMode ++;
+      if (menuMode > MENU_END) menuMode = MENU_BEGIN;
+    }
+    else if (inLog) {
+      logMode ++;
+      if (logMode > LOG_END) logMode = LOG_BEGIN;
+    }
+    else {
+      mode++;
+      if (mode > MODE_END) mode = MODE_BEGIN;
+      else if (!debug && (mode == MODE_VOLTAGES || mode == MODE_VALUES)) mode = MODE_MENU;
+    }
+    delay(100);
+    lcd.clear();
+  }
+  else if (checkPress(upPin)) {
+    if (!inMenu && mode == MODE_MENU) {
+      inMenu = true;
+    }
+    else if (inMenu && menuMode == MENU_METHOD) {
+      method++;
+      if (method > METHOD_END) method = METHOD_BEGIN;
+      eepromUpdateNeeded = true;
+    }
+    else if (inMenu && menuMode == MENU_LED) {
+      led++;
+      if (led > LED_END) led = LED_BEGIN;
+      eepromUpdateNeeded = true;
+    }
+    else if (inMenu && menuMode == MENU_LOGGING) {
+      enableLog = !enableLog;
+      eepromUpdateNeeded = true;
+    }
+    else if (inMenu && menuMode == MENU_TOLERANCE_INTERVAL && toleranceInterval < 255) {
+      toleranceInterval++;
+      eepromUpdateNeeded = true;
+    }
+    else if (inMenu && menuMode == MENU_DEBUG) {
+      debug = !debug;
+      eepromUpdateNeeded = true;
+    }
+    else if (inMenu && menuMode == MENU_EXIT) {
+      inMenu = false;
+    }
+    else if (!inLog && mode == MODE_LOG) {
+      inLog = true;
+    }
+    else if (inLog && logMode == LOG_EXIT) {
+      inLog = false;
+    }
+    else if (tolerance < 1023 - toleranceInterval) {
+      tolerance += toleranceInterval;
+      eepromUpdateNeeded = true;
+    }
+  }
+  else if (checkPress(downPin)) {
+    if (!inMenu && mode == MODE_MENU) {
+      inMenu = true;
+    }
+    else if (mode == MODE_MENU && menuMode == MENU_METHOD) {
+      method--;
+      if (method < MEAN_BASED) method = HIGH_BASED;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == MODE_MENU && menuMode == MENU_LED) {
+      led++;
+      if (led > LED_BEGIN) led = LED_END;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == MODE_MENU && menuMode == MENU_LOGGING) {
+      enableLog = !enableLog;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == MODE_MENU && menuMode == MENU_TOLERANCE_INTERVAL && toleranceInterval < 255) {
+      toleranceInterval++;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == MODE_MENU && menuMode == MENU_DEBUG) {
+      debug = !debug;
+      eepromUpdateNeeded = true;
+    }
+    else if (mode == MODE_MENU && menuMode == MENU_EXIT) {
+      inMenu = false;
+    }
+    else if (!inLog && mode == MODE_LOG) {
+      inLog = true;
+    }
+    else if (inLog && logMode == LOG_EXIT) {
+      inLog = false;
+    }
+    else if (tolerance > toleranceInterval && tolerance > 0) {
+      tolerance -= toleranceInterval;
+      eepromUpdateNeeded = true;
+    }
+  }
+}
+
+boolean checkPress(int pin) {
+  return digitalRead(pin) == LOW && debounce(pin, LOW, 20, 6);
 }
 
 boolean debounce(int pin, int value, int timeDelay, int bounceCount) {
@@ -748,22 +1079,154 @@ boolean readEEPROM() {
   if (EEPROM.read(eepromSet) != 42) return false; //EEPROM not set yet
   mode = EEPROM.read(eepromMode);
   method = EEPROM.read(eepromMethod);
-  tolerance = EEPROM.read(eepromTolerance[0])*256 + EEPROM.read(eepromTolerance[1]);
+  tolerance = EEPROM.read(eepromTolerance)*256 + EEPROM.read(eepromTolerance+1);
   debug = EEPROM.read(eepromDebug);
   led = EEPROM.read(eepromLED);
+  enableLog = EEPROM.read(eepromEnableLog);
   toleranceInterval = EEPROM.read(eepromToleranceInterval);
+  brightness = EEPROM.read(eepromBrightness);
 }
 
 void writeEEPROM() {
   EEPROM.write(eepromSet, 42); //EEPROM marked as initialized
   EEPROM.write(eepromMode, mode);
   EEPROM.write(eepromMethod, method);
-  EEPROM.write(eepromTolerance[0], tolerance/256);
-  EEPROM.write(eepromTolerance[1], tolerance%256);
+  EEPROM.write(eepromSaveMode, saveMode);
+  EEPROM.write(eepromTolerance, tolerance/256);
+  EEPROM.write(eepromTolerance + 1, tolerance%256);
   EEPROM.write(eepromDebug, debug);
+  EEPROM.write(eepromEnableLog, enableLog);
   EEPROM.write(eepromLED, led);
   EEPROM.write(eepromToleranceInterval, toleranceInterval);
+  EEPROM.write(eepromBrightness, brightness);
   
   eepromLastUpdated = millis();
   eepromUpdateNeeded = false; 
+}
+
+void readLog() {
+  lifeUpTime = readULongEEPROM(eepromLogUpTime);
+  lifeTimeInGear[0] = readULongEEPROM(eepromLogGearTime[0]);
+  for(int g = 0; g < gears; g++) {
+    lifeTimeInGear[g + 1] = readULongEEPROM(eepromLogGearTime[g + 1]);
+    lifeShiftsToGear[g] = readULongEEPROM(eepromLogShiftCount[g]);
+  }
+}
+
+void writeLog() {
+  writeULongEEPROM(eepromLogUpTime, lifeUpTime);
+  writeULongEEPROM(eepromLogGearTime[0], lifeTimeInGear[0]);
+  for(int g = 0; g < gears; g++) {
+    writeULongEEPROM(eepromLogGearTime[g + 1], lifeTimeInGear[g + 1]);
+    writeULongEEPROM(eepromLogShiftCount[g], lifeShiftsToGear[g]);
+  }
+  logRefreshed = millis();
+}
+
+unsigned long readULongEEPROM(int address) {
+  return EEPROM.read(address)*16777216 + EEPROM.read(address+1)*65536 + EEPROM.read(address+2)*256 + EEPROM.read(address+3);
+}
+
+void writeULongEEPROM(int address, unsigned long v) {
+  EEPROM.write(address, (v / 16777216) % 256);
+  EEPROM.write(address + 1, (v / 65536) % 256);
+  EEPROM.write(address + 2, (v / 256) % 256);
+  EEPROM.write(address + 3, v % 256);
+}
+
+void writeDebug(unsigned long loopTime) {
+  Serial.print("Mode: ");
+  Serial.print(mode);
+  Serial.print(" (Loop Time: ");
+  Serial.print(loopTime);
+  Serial.println("ms)");
+  
+  Serial.print("Baseline: ");
+  Serial.print(baseline);
+  Serial.print(" (");
+  Serial.print(formatValue(baseline));
+  Serial.print(") ");
+  Serial.print(toVoltage(baseline));
+  Serial.println("V");
+  
+  Serial.print("Tolerance: ");
+  Serial.print(tolerance);
+  Serial.print(" ");
+  Serial.print(toVoltage(tolerance));
+  Serial.println("V");
+  
+  Serial.print("In Gear: ** ");
+  Serial.print(gearName(gear));
+  Serial.print(" (");
+  Serial.print(gearChar(gear));
+  Serial.println(") **");
+  
+  if (inGear) {
+    Serial.print(" - Active Gear: ");
+    Serial.print(activeValue());
+    Serial.print(" ");
+    Serial.print(activeVoltage());
+    Serial.println("V");
+    Serial.print(" - Differential: ");
+    Serial.println(abs(activeValue() - baseline));
+  }
+  else {
+    Serial.println(" - Active Gear: N/A");
+    Serial.println(" - Differential: N/A");
+  }
+  
+  Serial.print("Gear 1: ");
+  Serial.print(values[0]);
+  Serial.print(" (");
+  Serial.print(formatValue(values[0]));
+  Serial.print(") ");
+  Serial.print(toVoltage(values[0]));
+  Serial.println("V");
+  
+  Serial.print("Gear 2: ");
+  Serial.print(values[1]);
+  Serial.print(" (");
+  Serial.print(formatValue(values[1]));
+  Serial.print(") ");
+  Serial.print(toVoltage(values[1]));
+  Serial.println("V");
+  
+  Serial.print("Gear 3: ");
+  Serial.print(values[2]);
+  Serial.print(" (");
+  Serial.print(formatValue(values[2]));
+  Serial.print(") ");
+  Serial.print(toVoltage(values[2]));
+  Serial.println("V");
+  
+  Serial.print("Gear 4: ");
+  Serial.print(values[3]);
+  Serial.print(" (");
+  Serial.print(formatValue(values[3]));
+  Serial.print(") ");
+  Serial.print(toVoltage(values[3]));
+  Serial.println("V");
+  
+  Serial.print("Gear 5: ");
+  Serial.print(values[4]);
+  Serial.print(" (");
+  Serial.print(formatValue(values[4]));
+  Serial.print(") ");
+  Serial.print(toVoltage(values[4]));
+  Serial.println("V");
+  
+  Serial.print("Gear R: ");
+  Serial.print(values[5]);
+  Serial.print(" (");
+  Serial.print(formatValue(values[5]));
+  Serial.print(") ");
+  Serial.print(toVoltage(values[5]));
+  Serial.println("V");
+  
+  Serial.print("Standard Deviation: ");
+  Serial.println(getStandardDeviation(baseline));
+  
+  Serial.println();
+  
+  debugRefresh = millis();
 }
