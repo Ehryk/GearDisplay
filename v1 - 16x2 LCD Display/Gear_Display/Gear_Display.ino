@@ -7,11 +7,17 @@ Ehryk Menze
 #include <EEPROM.h>
 
 #define MEAN_BASED 0
-#define TRIMMED_MEAN 1
-#define TRIMMED_THEORETICAL 2
-#define THEORETICAL 3
-#define LOW_BASED 4
-#define HIGH_BASED 5
+#define TRIM1_MEAN 1
+#define TRIM1_THEORETICAL 2
+#define TRIM1_HIGHEST 3
+#define TRIM1_LOWEST 4
+#define TRIM2_MEAN 5
+#define TRIM2_THEORETICAL 6
+#define TRIM2_HIGHEST 7
+#define TRIM2_LOWEST 8
+#define THEORETICAL 9
+#define LOW_BASED 10
+#define HIGH_BASED 11
 
 //Set up LCD pins for 4 bit mode
 int lcdRS = 9;
@@ -319,8 +325,14 @@ void readValues(){
 
 int computeBaseline(int m) {
   if (m == MEAN_BASED) return getMean();
-  else if (m == TRIMMED_MEAN) return getTrimmed(false);
-  else if (m == TRIMMED_THEORETICAL) return getTrimmed(true);
+  else if (m == TRIM1_MEAN) return getTrimmed(getMean(), 1);
+  else if (m == TRIM1_THEORETICAL) return getTrimmed(theoretical, 1);
+  else if (m == TRIM1_HIGHEST) return getTrimmed(0, 1);
+  else if (m == TRIM1_LOWEST) return getTrimmed(1023, 1);
+  else if (m == TRIM2_MEAN) return getTrimmed(getMean(), 2);
+  else if (m == TRIM2_THEORETICAL) return getTrimmed(theoretical, 2);
+  else if (m == TRIM2_HIGHEST) return getTrimmed(0, 2);
+  else if (m == TRIM2_LOWEST) return getTrimmed(1023, 2);
   else if (m == THEORETICAL) return theoretical;
   else if (m == LOW_BASED) return 0;
   else if (m == HIGH_BASED) return 1023;
@@ -336,29 +348,32 @@ int getMean() {
   return total / gears;
 }
 
-int getTrimmed(boolean theoretical) {
-  int subline = 0;
-  if (theoretical) subline = theoretical;
-  else subline = getMean();
+int getTrimmed(int subline, int toTrim) {
+  if (toTrim >= gears) return subline;
   
   //Find which gear gets trimmed
   //(Furthest off the subline)
-  int maximum = 0;
-  int maximumValue = 0;
-  for (int g = 0; g < gears; g++) {
-    int differential = abs(values[g] - subline);
-    if (differential > maximumValue) {
-      maximumValue = differential;
-      maximum = g;
+  boolean trim[gears];
+  for(int init = 0; init < gears; init++) trim[init] = false;
+  for (int i = 0; i < toTrim; i++) {
+    int maximum = 0;
+    int maximumValue = 0;
+    for (int g = 0; g < gears; g++) {
+      int differential = abs(values[g] - subline);
+      if (!trim[g] && differential > maximumValue) {
+        maximumValue = differential;
+        maximum = g;
+      }
     }
+    trim[maximum] = true;
   }
   
   int trimmedTotal = 0;
   for (int g = 0; g < gears; g++) {
-    if (g != maximum) trimmedTotal += values[g];
+    if (!trim[g]) trimmedTotal += values[g];
   }
   
-  return trimmedTotal / (gears - 1);
+  return trimmedTotal / (gears - toTrim);
 }
 
 float getStandardDeviation(int b) {
@@ -647,8 +662,14 @@ void writeMenuMethod() {
   lcd.setCursor(0, 1);
   switch(method) {
     case MEAN_BASED:          lcd.print("Mean Based      "); break;
-    case TRIMMED_MEAN:        lcd.print("Trimmed - Mean  "); break;
-    case TRIMMED_THEORETICAL: lcd.print("Trimmed - Theory"); break;
+    case TRIM1_MEAN:          lcd.print("Trim 1 - Mean   "); break;
+    case TRIM1_THEORETICAL:   lcd.print("Trim 1 - Theory"); break;
+    case TRIM1_HIGHEST:       lcd.print("Trim 1 - Highest"); break;
+    case TRIM1_LOWEST:        lcd.print("Trim 1 - Lowest "); break;
+    case TRIM2_MEAN:          lcd.print("Trim 2 - Mean   "); break;
+    case TRIM2_THEORETICAL:   lcd.print("Trim 2 - Theory "); break;
+    case TRIM2_HIGHEST:       lcd.print("Trim 2 - Highest"); break;
+    case TRIM2_LOWEST:        lcd.print("Trim 2 - Lowest "); break;
     case THEORETICAL:         lcd.print("Theoretical     "); break;
     case LOW_BASED:           lcd.print("Low (0VDC)      "); break;
     case HIGH_BASED:          lcd.print("High (+5VDC)    "); break;
