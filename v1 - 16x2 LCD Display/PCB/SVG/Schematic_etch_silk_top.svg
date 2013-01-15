@@ -12,9 +12,9 @@
   </g>
  </g>
  <g partID="352010">
-  <g transform="translate(15.6552,13.02)">
+  <g transform="translate(0.6464,11.0056)">
    <g id="silkscreen">
-    <text x="36" y="6.48" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.2">Display v1</text>
+    <text x="43.61" y="7.84977" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="8.72201">Display v1</text>
    </g>
   </g>
  </g>
@@ -164,14 +164,14 @@
   </g>
  </g>
  <g partID="340930">
-  <g transform="translate(223.313,143.195)">
+  <g transform="translate(223.496,143.378)">
    <g id="silkscreen">
     <text x="19.6245" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">max 20VDC</text>
    </g>
   </g>
  </g>
  <g partID="340900">
-  <g transform="translate(223.426,138.876)">
+  <g transform="translate(223.426,139.425)">
    <g id="silkscreen">
     <text x="19.6245" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">min 11VDC</text>
    </g>
@@ -192,14 +192,14 @@
   </g>
  </g>
  <g partID="340820">
-  <g transform="translate(30.3504,4.2408)">
+  <g transform="translate(19.9928,2.5632)">
    <g id="silkscreen">
-    <text x="14.4567" y="6.50552" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.22835">Gear</text>
+    <text x="17.444" y="7.84977" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="8.72199">Gear</text>
    </g>
   </g>
  </g>
  <g partID="340790">
-  <g transform="translate(109.469,129.266)">
+  <g transform="translate(109.469,127.874)">
    <g id="silkscreen">
     <text x="54.2128" y="6.50552" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="7.22837">Gear Display v1</text>
    </g>
@@ -350,13 +350,8 @@
    </g>
   </g>
  </g>
- <g partID="12041">
-  <g id="silkscreen">
-   <rect width="266.437" x="0.576" y="0.576" fill="none" height="152.668" stroke="black" stroke-width="0.576"/>
-  </g>
- </g>
  <g partID="353890">
-  <g transform="translate(77.3176,10.5496)">
+  <g transform="translate(77.4992,10.3488)">
    <g id="silkscreen">
     <text x="15.2635" y="3.9249" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="4.36099">Arduino</text>
    </g>
@@ -369,6 +364,11 @@
    </g>
   </g>
  </g>
+ <g partID="12041">
+  <g id="silkscreen">
+   <rect width="266.437" x="0.576" y="0.576" fill="none" height="152.668" stroke="black" stroke-width="0.576"/>
+  </g>
+ </g>
  <g partID="64162">
   <g transform="translate(33.32,22.4)">
    <g id="silkscreen">
@@ -377,29 +377,36 @@
    </g>
   </g>
  </g>
+ <g partID="461510">
+  <g transform="translate(245.999,61.0168)">
+   <g id="silkscreen">
+    <text x="92.6708" y="9.81222" fill="black" font-family="OCRA" text-anchor="middle" xmlns:xml="http://www.w3.org/XML/1998/namespace" id="label" xml:space="preserve" stroke-width="0" font-size="10.9025">&lt;- 8+ Conductor-></text>
+   </g>
+  </g>
+ </g>
  <g id="partLabel" partID="64280">
-  <g transform="translate(1.5264,103.814)">
+  <g transform="translate(1.52616,103.814)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Down (-)</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="64310">
-  <g transform="translate(3.744,60.1112)">
+  <g transform="translate(3.7439,60.1111)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Up (+)</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="64250">
-  <g transform="translate(7.1968,11.2232)">
+  <g transform="translate(6.69154,47.0969)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Mode</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="299000">
-  <g transform="translate(192.227,95.168)">
+  <g transform="translate(192.227,95.1678)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">LCD Contrast</text>
    </g>
@@ -420,14 +427,14 @@
   </g>
  </g>
  <g id="partLabel" partID="311350">
-  <g transform="translate(97.3368,133.038)">
+  <g transform="translate(97.5432,132.213)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">C2 10uF</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="328130">
-  <g transform="translate(43.648,88.8)">
+  <g transform="translate(43.6484,88.8)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Regulator Pad</text>
    </g>
@@ -441,7 +448,7 @@
   </g>
  </g>
  <g id="partLabel" partID="172190">
-  <g transform="translate(261.333,150.38)">
+  <g transform="translate(261.333,150.379)">
    <g transform="matrix(0,-1,1,0,0,0)">
     <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
      <text x="0" y="3.75">Hall Effect Power</text>
@@ -450,7 +457,7 @@
   </g>
  </g>
  <g id="partLabel" partID="171960">
-  <g transform="translate(261.617,73.4096)">
+  <g transform="translate(261.617,73.4102)">
    <g transform="matrix(0,-1,1,0,0,0)">
     <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
      <text x="0" y="3.75">Hall Effect Signals</text>
@@ -466,21 +473,21 @@
   </g>
  </g>
  <g id="partLabel" partID="371180">
-  <g transform="translate(191.272,5.7936)">
+  <g transform="translate(187.176,4.2576)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">LED</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="63840">
-  <g transform="translate(126.87,11.3352)">
+  <g transform="translate(131.055,11.089)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">Arduino</text>
    </g>
   </g>
  </g>
  <g id="partLabel" partID="64160">
-  <g transform="translate(109.446,17.7144)">
+  <g transform="translate(109.446,17.7143)">
    <g fill="#000000" font-family="'OCRA'" stroke="none" font-style="normal" fill-opacity="1" font-weight="normal" id="silkscreenLabel" font-size="5">
     <text x="0" y="3.75">16x2 LCD</text>
    </g>
