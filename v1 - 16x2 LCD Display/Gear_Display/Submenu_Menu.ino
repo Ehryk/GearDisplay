@@ -44,7 +44,7 @@ void writeMenuMethod() {
   switch(method) {
     case MEAN_BASED:          lcd.print("Mean (Default)  "); break;
     case TRIM1_MEAN:          lcd.print("Trim 1 - Mean   "); break;
-    case TRIM1_THEORETICAL:   lcd.print("Trim 1 - Theory"); break;
+    case TRIM1_THEORETICAL:   lcd.print("Trim 1 - Theory "); break;
     case TRIM1_HIGHEST:       lcd.print("Trim 1 - Highest"); break;
     case TRIM1_LOWEST:        lcd.print("Trim 1 - Lowest "); break;
     case TRIM2_MEAN:          lcd.print("Trim 2 - Mean   "); break;
@@ -56,8 +56,8 @@ void writeMenuMethod() {
     case TRIM3_HIGHEST:       lcd.print("Trim 3 - Highest"); break;
     case TRIM3_LOWEST:        lcd.print("Trim 3 - Lowest "); break;
     case THEORETICAL:         lcd.print("Theoretical     "); break;
-    case LOW_BASED:           lcd.print("Low (0VDC)      "); break;
-    case HIGH_BASED:          lcd.print("High (+5VDC)    "); break;
+    case LOW_BASED:           lcd.print("Low  (0 VDC)    "); break;
+    case HIGH_BASED:          lcd.print("High (+5 VDC)   "); break;
   }
 }
 
@@ -68,6 +68,9 @@ void writeMenuLED() {
   lcd.setCursor(0, 1);
   if (led == LED_IN_GEAR) lcd.print("ON - In Gear");
   else if (led == LED_NEUTRAL) lcd.print("ON - Neutral");
+  else if (led == LED_CITY)    lcd.print("ON - City");
+  else if (led == LED_HIGHWAY) lcd.print("ON - Highway");
+  else if (led == LED_ERROR)   lcd.print("ON - Error");
   else lcd.print("OFF         ");
 }
 
