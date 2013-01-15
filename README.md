@@ -11,15 +11,19 @@ This is a display-agnostic version of the core functionality. It will read the a
 
 **v1 - 16x2 LCD Display**
 
-This is the first version I wrote, tuned for a standard 16x2 LCD screen. A schematic is included. This uses three push button switches and a potentiometer for the following functions: mode switching, tolerance up, tolerance down, and LCD contrast, respectively. This version has 9 display modes:
+This is the first version I wrote, tuned for a standard 16x2 LCD screen. A schematic is included. This uses three push button switches and a potentiometer for the following functions: mode switching, tolerance up, tolerance down, and LCD contrast, respectively. This version has 12 display modes:
 
 1. Basic Display
+1. Basic Display - With Accent
 1. Advanced Display
+1. Advanced Display - With Accent
 1. Variables Display (tolerance in voltage)
 1. Variables Display (tolerance in internal units [0-1023])
-1. Values Display (displays all six internal unit values)
-1. Voltage Display (displays all six voltages)
+1. Gear Voltages (Debug Only)
+1. Gear Values (Debug Only)
 1. Fill Mode - fills every position with the character of the gear (N for Neutral, 1 for first, etc.)
+1. Enter Menu (press + or -)
+1. Enter Log (press + or -)
 1. Credits
 1. Display off
 
