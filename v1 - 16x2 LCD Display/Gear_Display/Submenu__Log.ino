@@ -19,10 +19,11 @@ It provided details accumulated over time about shifting habits, etc.
 #define LOG_GEAR_TIME_T 12
 #define LOG_GEAR_PERCENT 13
 #define LOG_GEAR_PERCENT_T 14
-#define LOG_EXIT 15
+#define LOG_CLEAR 15
+#define LOG_EXIT 16
 
 #define LOG_BEGIN 0
-#define LOG_END 15
+#define LOG_END 16
 
 void writeLog(int logScreen) {
   if (!inLog) writePrompt("ENTER LOG:");
@@ -43,6 +44,7 @@ void writeLog(int logScreen) {
       case LOG_GEAR_TIME_T: writeLogGearTime(36000, 'h', true); break;
       case LOG_GEAR_PERCENT: writeLogGearPercent(false); break;
       case LOG_GEAR_PERCENT_T: writeLogGearPercent(true); break;
+      case LOG_CLEAR: writeLogClear(); break;
       case LOG_EXIT: writePrompt("EXIT LOG:"); break;
     }
   }
@@ -241,6 +243,13 @@ void writeLogNeutral(int divisor, char unit, boolean lifeTime) {
   lcd.print(unit);
 }
 
+void writeLogClear() {
+  lcd.setCursor(0, 0);
+  lcd.print("CLEAR LOG:");
+  lcd.setCursor(0, 1);
+  lcd.print(" + Trip  - Life ");
+}
+
 //                      //
 /* -- INPUT HANDLING -- */
 //                      //
@@ -252,12 +261,38 @@ void logModePressed() {
 
 void logUpPressed() {
   switch(logMode) {
+    case LOG_CLEAR: clearLog(false);
     case LOG_EXIT: inLog = false; break;
   }
 }
 
 void logDownPressed() {
   switch(logMode) {
+    case LOG_CLEAR: clearLog(true);
     case LOG_EXIT: inLog = false; break;
   }
+}
+
+void clearLog(boolean lifeTime) {
+  upTime = 0;
+  timeInGear[0] = 0;
+  for (int i = 0; i < gears; i++) {
+    timeInGear[i + 1] = 0;
+    shiftsToGear[i] = 0;
+  }
+  
+  if (lifeTime) {
+    lifeUpTime = 0;
+    lifeTimeInGear[0] = 0;
+    for (int i = 0; i < gears; i++) {
+      lifeTimeInGear[i + 1] = 0;
+      lifeShiftsToGear[i] = 0;
+    }
+    writeLog();
+  }
+  
+  lcd.setCursor(0, 1);
+  if (lifeTime) lcd.print("  Life Cleared! ");
+  else lcd.print("  Trip Cleared! ");
+  delay(2000);
 }

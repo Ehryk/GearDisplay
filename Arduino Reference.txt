@@ -24,3 +24,5 @@ Pin 10: SS (Slave Select) (recommended)
 LEDs:
 - Cathode - Shorter Leg, Flat Side
 + Anode - Longer Leg, Round Side
+
+The Touchscreen uses has details here: http://www.elecfreaks.com/wiki/index.php?title=2.4%22_TFT_LCD:_TFT01-2.4

@@ -3,7 +3,7 @@ Reads and writes to and from the EEPROM for persistant storage
 */
 
 boolean readEEPROM() {
-  if (EEPROM.read(eepromSet) != 42) return false; //EEPROM not set yet
+  if (EEPROM.read(eepromSet) != 42 || clearEEPROM) return false; //EEPROM not set yet
   mode = EEPROM.read(eepromMode);
   method = EEPROM.read(eepromMethod);
   tolerance = EEPROM.read(eepromTolerance)*256 + EEPROM.read(eepromTolerance+1);
@@ -13,6 +13,7 @@ boolean readEEPROM() {
   toleranceInterval = EEPROM.read(eepromToleranceInterval);
   brightness = EEPROM.read(eepromBrightness);
   accent = EEPROM.read(eepromAccent);
+  return true;
 }
 
 void writeEEPROM() {
@@ -34,6 +35,7 @@ void writeEEPROM() {
 }
 
 void readLog() {
+  if (clearLogBoolean) return;
   lifeUpTime = readULongEEPROM(eepromLogUpTime);
   lifeTimeInGear[0] = readULongEEPROM(eepromLogGearTime[0]);
   for(int g = 0; g < gears; g++) {
@@ -70,4 +72,46 @@ void writeULongEEPROM(int address, unsigned long v) {
   EEPROM.write(address + 1, (v / 65536) % 256);
   EEPROM.write(address + 2, (v / 256) % 256);
   EEPROM.write(address + 3, v % 256);
+}
+
+void checkPowerLoss() {
+  powerLoss = voltageLow();
+}
+
+boolean voltageLow() {
+  return readVcc() < 4300;
+}
+
+void shutDown() {
+  unsigned long saveTime = millis();
+  digitalWrite(ledPin, LOW); //Turn Off LED
+  digitalWrite(lcdBrightness, LOW); //Turn Off LCD Backlight
+  if (enableLog) writeLog(); //Save Log Values
+  if (enableEEPROM) writeEEPROM(); //Save Variable State
+  
+  if (debug) {
+    saveTime = millis() - saveTime;
+    Serial.println();
+    Serial.println();
+    Serial.println("POWER LOST.");
+    Serial.print("Written to EEPROM in ");
+    Serial.print(saveTime);
+    Serial.println("ms");
+    Serial.println();
+  }
+  
+  do {
+    if (debug) {
+      Serial.print("Voltage Low: ");
+      Serial.print(readVcc());
+      Serial.println("mV");
+    }
+    delay(5000); //Wait until expected powerdown, check for voltage return every 5 seconds
+  } while (voltageLow());
+  
+  powerLoss = false;
+  if (debug) {
+    Serial.print("POWER RESTORED.");
+  }
+  return;
 }

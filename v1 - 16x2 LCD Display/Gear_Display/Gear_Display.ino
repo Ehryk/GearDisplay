@@ -75,12 +75,13 @@ int eepromDebug = 9;
 int eepromBrightness = 10;
 int eepromAccent = 11;
 boolean eepromUpdateNeeded = false;
+boolean powerLoss = false;
 unsigned long eepromLastUpdated = 0;
 int eepromInterval = 10000; //How often to wait after a change to write to EEPROM
 
 //Logging
 boolean enableLog = true;
-boolean clearLog = false; // -- SET TO TRUE ONLY WHEN ADDRESSES CHANGE, or to reset persistent log  --
+boolean clearLogBoolean = false; // -- SET TO TRUE ONLY WHEN ADDRESSES CHANGE, or to reset persistent log  --
 //Log Times in tenths of a second
 unsigned long timeInGear[1 + 6]; //0 for Neutral, 1-R
 unsigned long upTime = 0; //Time the unit has been on, persisting between power cycles
@@ -147,6 +148,9 @@ void setup() {
 /*  LOOP  */
 //loop() gets called repeatedly for the duration of power
 void loop() {
+  checkPowerLoss(); //Check for power loss
+  if (powerLoss) shutDown();
+  
   //Loop Timing
   unsigned long loopTime = millis() - lastLoopStart;
   if (millis() < lastLoopStart) loopTime = 0; //millis() overflow, ~70 days 
