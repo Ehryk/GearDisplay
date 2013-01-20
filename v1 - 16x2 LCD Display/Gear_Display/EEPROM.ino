@@ -79,13 +79,15 @@ void checkPowerLoss() {
 }
 
 boolean voltageLow() {
-  return readVcc() < 4300;
+  return readVcc() < 3900;
 }
 
 void shutDown() {
   unsigned long saveTime = millis();
-  digitalWrite(ledPin, LOW); //Turn Off LED
-  digitalWrite(lcdBrightness, LOW); //Turn Off LCD Backlight
+  if (!debug) {
+    digitalWrite(ledPin, LOW); //Turn Off LED
+    digitalWrite(lcdBrightness, LOW); //Turn Off LCD Backlight
+  }
   if (enableLog) writeLog(); //Save Log Values
   if (enableEEPROM) writeEEPROM(); //Save Variable State
   
@@ -111,7 +113,10 @@ void shutDown() {
   
   powerLoss = false;
   if (debug) {
-    Serial.print("POWER RESTORED.");
+    Serial.print("POWER RESTORED. ");
+    Serial.print(readVcc());
+    Serial.println("mV");
+    Serial.println;
   }
   return;
 }

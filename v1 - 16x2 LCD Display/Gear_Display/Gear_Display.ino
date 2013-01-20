@@ -40,6 +40,7 @@ int menuMode = 0; //Which menu mode is selected
 boolean inLog = false; //Whether the user is in the log system
 int logMode = 0; //Which log mode is selected
 int screenMode = 0; //Which 'version' of a given screen is being displayed
+int vcc = 0; //Voltage input in mV
 int brightness = 255; //LCD Brightness
 int brightnessInterval = 15; //LCD Brightness Increment to increase/decrease by
 char accent = 0; //Surrounds gear char
@@ -120,6 +121,7 @@ void setup() {
   digitalWrite(downPin, HIGH);
   
   //Set up LCD
+  setLCDBrightness(brightness);
   lcd.begin(16, 2);
   
   createCustomCharacters();

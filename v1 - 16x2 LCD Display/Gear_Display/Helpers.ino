@@ -75,7 +75,7 @@ String padLeft(int number, int padding, char* pad) {
 }
 
 float toVoltage(int voltageValue10bit) {
-  return voltageValue10bit * 5.0 / 1023.0;
+  return (float)voltageValue10bit * vcc / 1000 / 1023.0;
 }
 
 long readVcc() {
