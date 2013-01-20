@@ -10,7 +10,6 @@ void handleButtons() {
     if (inMenu) menuModePressed();
     else if (inLog) logModePressed();
     else modePressed();
-    delay(100);
     lcd.clear();
   }
   else if (checkPress(UP_PIN)) {
@@ -27,7 +26,7 @@ void handleButtons() {
 
 //Checks if a button is pressed
 boolean checkPress(int pin) {
-  return digitalRead(pin) == LOW && debounce(pin, LOW, 20, 6);
+  return digitalRead(pin) == LOW && debounce(pin, LOW, 20, 2);
 }
 
 //Software Debounce of a swtich

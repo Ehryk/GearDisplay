@@ -6,8 +6,8 @@ Ehryk Menze
 #include <EEPROM.h>
 #include <LiquidCrystal.h>
 
-/* Number of Gears. Only tested on a 5 speed */
-#define GEARS 6 //Including Reverse
+/* Number of Gears, including Reverse. Only tested on a 5 speed */
+#define GEARS 6
 
 /* Define Pin Usage */
 //Digital Input Pins
@@ -55,7 +55,7 @@ int menuMode = 0; //Which menu mode is selected
 boolean inLog = false; //Whether the user is in the log system
 int logMode = 0; //Which log mode is selected
 int screenMode = 0; //Which 'version' of a given screen is being displayed
-int vcc = 0; //Voltage input in mV
+int vcc = 5000; //Voltage input in mV, should be 5000mV (5V) in theory
 int brightness = 255; //LCD Brightness
 char accent = 0; //Surrounds gear char
 int gear = -2; //Which gear is active, if any. 0 = Neutral.

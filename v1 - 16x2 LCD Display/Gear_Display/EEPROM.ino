@@ -59,6 +59,11 @@ void writeEEPROM() {
   eepromUpdateNeeded = false; 
 }
 
+void stageEEPROM() {
+  eepromUpdateNeeded = true;
+  eepromLastChanged = millis();
+}
+
 void readLog() {
   if (clearLogBoolean) return;
   lifeUpTime = readULongEEPROM(eepromLogUpTime);

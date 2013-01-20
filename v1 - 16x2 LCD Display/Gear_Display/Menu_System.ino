@@ -218,7 +218,7 @@ void modePressed() {
   mode++;
   if (mode > MODE_END) mode = MODE_BEGIN;
   else if (!debug && (mode == MODE_VOLTAGES || mode == MODE_VALUES)) mode = MODE_MENU; //Skip to Menu if not in Debug Mode
-  eepromUpdateNeeded = true;
+  stageEEPROM();
 }
 
 void upPressed() {
@@ -230,7 +230,7 @@ void upPressed() {
   }
   else if (tolerance + toleranceInterval <= 1023) {
     tolerance += toleranceInterval;
-    eepromUpdateNeeded = true;
+    stageEEPROM();
   }
 }
 
@@ -243,6 +243,6 @@ void downPressed() {
   }
   else if (tolerance - toleranceInterval >= 0) {
     tolerance -= toleranceInterval;
-    eepromUpdateNeeded = true;
+    stageEEPROM();
   }
 }

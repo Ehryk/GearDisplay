@@ -159,37 +159,37 @@ void menuUpPressed() {
     case MENU_METHOD:
       method++;
       if (method > METHOD_END) method = METHOD_BEGIN;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_LED: 
       led++;
       if (led > LED_END) led = LED_BEGIN;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_BRIGHTNESS:
       if (brightness + BRIGHTNESS_INTERVAL <= 255) {
         brightness += BRIGHTNESS_INTERVAL;
-        eepromUpdateNeeded = true;
+        stageEEPROM();
       }
       break;
     case MENU_TOLERANCE_INTERVAL:
       if (toleranceInterval < 255) {
         toleranceInterval++;
-        eepromUpdateNeeded = true;
+        stageEEPROM();
       }
       break;
     case MENU_SEPARATOR:
       accent++;
       if (accent > ACCENT_COUNT) accent = 0;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_LOGGING: 
       enableLog = !enableLog;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_DEBUG: 
       debug = !debug;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_VOLTAGES: break;
     case MENU_VALUES: break;
@@ -202,37 +202,37 @@ void menuDownPressed() {
     case MENU_METHOD:
       method--;
       if (method < METHOD_BEGIN) method = METHOD_END;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_LED: 
       led--;
       if (led < LED_BEGIN) led = LED_END;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_BRIGHTNESS:
       if (brightness - BRIGHTNESS_INTERVAL >= 0) {
         brightness -= BRIGHTNESS_INTERVAL;
-        eepromUpdateNeeded = true;
+        stageEEPROM();
       }
       break;
     case MENU_TOLERANCE_INTERVAL:
       if (toleranceInterval > 0) {
         toleranceInterval--;
-        eepromUpdateNeeded = true;
+        stageEEPROM();
       }
       break;
     case MENU_SEPARATOR:
       accent--;
       if (accent < 0) accent = ACCENT_COUNT;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_LOGGING: 
       enableLog = !enableLog;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_DEBUG: 
       debug = !debug;
-      eepromUpdateNeeded = true;
+      stageEEPROM();
       break;
     case MENU_VOLTAGES: break;
     case MENU_VALUES: break;
