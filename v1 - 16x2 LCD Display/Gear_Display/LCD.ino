@@ -8,7 +8,7 @@ Configures and handles the LCD Display
 #define FOUR_COLON 4
 
 void setLCDBrightness(int v) {
-  analogWrite(lcdBrightness, v);
+  analogWrite(LCD_BRIGHTNESS_PIN, v);
 }
 
 //Create Custom LCD Characters

@@ -6,16 +6,18 @@ Ehryk Menze
 #include <EEPROM.h>
 #include <LiquidCrystal.h>
 
+/* Define Constants */
+#define LCD_RS_PIN 9
+#define LCD_ENABLE_PIN 8
+#define LCD_D4 7
+#define LCD_D5 6
+#define LCD_D6 5
+#define LCD_D7 4
+#define LCD_BRIGHTNESS_PIN 3
+
 //Set up LCD pins for 4 bit mode
-int lcdRS = 9;
-int lcdEnable = 8;
-int lcdD4 = 7;
-int lcdD5 = 6;
-int lcdD6 = 5;
-int lcdD7 = 4;
-int lcdBrightness = 3;
 //initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(lcdRS, lcdEnable, lcdD4, lcdD5, lcdD6, lcdD7);
+LiquidCrystal lcd(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 //Configure Pins
 int gears = 6;
@@ -113,7 +115,7 @@ void setup() {
   pinMode(modePin, INPUT);
   pinMode(upPin, INPUT);
   pinMode(downPin, INPUT);
-  pinMode(lcdBrightness, OUTPUT);
+  pinMode(LCD_BRIGHTNESS_PIN, OUTPUT);
   
   //Use internal pull-up resistors
   digitalWrite(modePin, HIGH);
