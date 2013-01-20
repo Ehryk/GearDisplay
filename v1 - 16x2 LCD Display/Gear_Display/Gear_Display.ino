@@ -9,24 +9,24 @@ Ehryk Menze
 /* Define Pin Usage */
 //Digital Input Pins
 #define LED_PIN 2
+#define LCD_BRIGHTNESS_PIN 3
+#define LCD_D7 4
+#define LCD_D6 5
+#define LCD_D5 6
+#define LCD_D4 7
+#define LCD_ENABLE_PIN 8
+#define LCD_RS_PIN 9
 #define MODE_PIN 10
 #define UP_PIN 11
 #define DOWN_PIN 12
-#define LCD_RS_PIN 9
-#define LCD_ENABLE_PIN 8
-#define LCD_D4 7
-#define LCD_D5 6
-#define LCD_D6 5
-#define LCD_D7 4
-#define LCD_BRIGHTNESS_PIN 3
+#define GEARS 6 //Including Reverse
+int gearPin[GEARS] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
 
 //Set up LCD pins for 4 bit mode
 //initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 //Configure Pins
-int gears = 6;
-int gearPin[6] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
 
 //Declare Global Variables
 //Values will range between 0 and 1023, (0V and 5V respectively)
@@ -108,7 +108,7 @@ void setup() {
   Serial.begin(baud);
   
   //Set pin modes
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     pinMode(g, INPUT);
   }
   pinMode(LED_PIN, OUTPUT);
@@ -132,7 +132,7 @@ void setup() {
   
   if (enableLog) {
     timeInGear[0] = 0;
-    for (int g = 0; g < gears; g++) {
+    for (int g = 0; g < GEARS; g++) {
       timeInGear[g + 1] = 0;
       shiftsToGear[g] = 0;
     }

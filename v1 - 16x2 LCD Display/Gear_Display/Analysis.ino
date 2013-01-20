@@ -22,7 +22,7 @@
 
 void readValues(){
   vcc = readVcc();
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     values[g] = readHallEffect(gearPin[g]);
   }
 }
@@ -54,23 +54,23 @@ int computeBaseline(int m) {
 
 int getMean() {
   int total = 0;
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     total += values[g];
   }
-  return total / gears;
+  return total / GEARS;
 }
 
 int getTrimmed(int subline, int toTrim) {
-  if (toTrim >= gears) return subline;
+  if (toTrim >= GEARS) return subline;
   
   //Find which gear gets trimmed
   //(Furthest off the subline)
-  boolean trim[gears];
-  for(int init = 0; init < gears; init++) trim[init] = false;
+  boolean trim[GEARS];
+  for(int init = 0; init < GEARS; init++) trim[init] = false;
   for (int i = 0; i < toTrim; i++) {
     int maximum = 0;
     int maximumValue = 0;
-    for (int g = 0; g < gears; g++) {
+    for (int g = 0; g < GEARS; g++) {
       int differential = abs(values[g] - subline);
       if (!trim[g] && differential > maximumValue) {
         maximumValue = differential;
@@ -81,19 +81,19 @@ int getTrimmed(int subline, int toTrim) {
   }
   
   int trimmedTotal = 0;
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     if (!trim[g]) trimmedTotal += values[g];
   }
   
-  return trimmedTotal / (gears - toTrim);
+  return trimmedTotal / (GEARS - toTrim);
 }
 
 float getStandardDeviation(int b) {
   float variance = 0;
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     variance += pow(toVoltage(values[g] - b), 2);
   }
-  variance = variance / gears;
+  variance = variance / GEARS;
   return sqrt(variance);
 }
 
@@ -101,7 +101,7 @@ int countActive() {
   //Return the number of pins above tolerance
   int count = 0;
   
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     if (active(values[g])) count++;
   }
   
@@ -115,7 +115,7 @@ int activePin() {
   if (numberActive == 0) return 0;
   if (numberActive >= 2) return -1;
   
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     if (active(values[g])) return gearPin[g];
   }
   
@@ -130,7 +130,7 @@ int activeGear() {
   if (numberActive == 0) return 0;
   if (numberActive >= 2) return -1;
   
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     if (active(values[g])) return g + 1;
   }
   
@@ -145,7 +145,7 @@ int activeValue() {
   if (numberActive == 0) return 0;
   if (numberActive >= 2) return -1;
   
-  for (int g = 0; g < gears; g++) {
+  for (int g = 0; g < GEARS; g++) {
     if (active(values[g])) return values[g];
   }
   

@@ -38,7 +38,7 @@ void readLog() {
   if (clearLogBoolean) return;
   lifeUpTime = readULongEEPROM(eepromLogUpTime);
   lifeTimeInGear[0] = readULongEEPROM(eepromLogGearTime[0]);
-  for(int g = 0; g < gears; g++) {
+  for(int g = 0; g < GEARS; g++) {
     lifeTimeInGear[g + 1] = readULongEEPROM(eepromLogGearTime[g + 1]);
     lifeShiftsToGear[g] = readUIntEEPROM(eepromLogShiftCount[g]);
   }
@@ -47,7 +47,7 @@ void readLog() {
 void writeLog() {
   writeULongEEPROM(eepromLogUpTime, lifeUpTime);
   writeULongEEPROM(eepromLogGearTime[0], lifeTimeInGear[0]);
-  for(int g = 0; g < gears; g++) {
+  for(int g = 0; g < GEARS; g++) {
     writeULongEEPROM(eepromLogGearTime[g + 1], lifeTimeInGear[g + 1]);
     writeUIntEEPROM(eepromLogShiftCount[g], lifeShiftsToGear[g]);
   }

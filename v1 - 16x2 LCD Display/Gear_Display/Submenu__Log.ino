@@ -56,13 +56,13 @@ void writeLogHwyCity(int divisor, char unit, boolean lifeTime) {
   float city = 0;
   float highway = 0;
   if (lifeTime) {
-    for (int g = 1; g < gears + 1; g++) {
+    for (int g = 1; g < GEARS + 1; g++) {
       if (g != 5) city += lifeTimeInGear[g];
     }
     highway = lifeTimeInGear[5];
   }
   else {
-    for (int g = 1; g < gears + 1; g++) {
+    for (int g = 1; g < GEARS + 1; g++) {
       if (g != 5) city += timeInGear[g];
     }
     highway = timeInGear[5];
@@ -176,7 +176,7 @@ void writeLogGearTime(int divisor, char unit, boolean lifeTime) {
 
 void writeLogGearPercent(boolean lifeTime) {
   unsigned long total;
-  for (int g = 0; g < gears + 1; g++) {
+  for (int g = 0; g < GEARS + 1; g++) {
     if (lifeTime) total += lifeTimeInGear[g];
     else total += timeInGear[g];
   }
@@ -216,13 +216,13 @@ void writeLogNeutral(int divisor, char unit, boolean lifeTime) {
   float gearTime = 0;
   float neutralTime = 0;
   if (lifeTime) {
-    for (int g = 1; g < gears + 1; g++) {
+    for (int g = 1; g < GEARS + 1; g++) {
       gearTime += lifeTimeInGear[g];
     }
     neutralTime = lifeTimeInGear[0];
   }
   else {
-    for (int g = 1; g < gears + 1; g++) {
+    for (int g = 1; g < GEARS + 1; g++) {
       gearTime += timeInGear[g];
     }
     neutralTime = timeInGear[0];
@@ -276,7 +276,7 @@ void logDownPressed() {
 void clearLog(boolean lifeTime) {
   upTime = 0;
   timeInGear[0] = 0;
-  for (int i = 0; i < gears; i++) {
+  for (int i = 0; i < GEARS; i++) {
     timeInGear[i + 1] = 0;
     shiftsToGear[i] = 0;
   }
@@ -284,7 +284,7 @@ void clearLog(boolean lifeTime) {
   if (lifeTime) {
     lifeUpTime = 0;
     lifeTimeInGear[0] = 0;
-    for (int i = 0; i < gears; i++) {
+    for (int i = 0; i < GEARS; i++) {
       lifeTimeInGear[i + 1] = 0;
       lifeShiftsToGear[i] = 0;
     }
