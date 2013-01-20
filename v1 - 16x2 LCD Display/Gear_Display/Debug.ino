@@ -26,7 +26,7 @@ void writeDebug(unsigned long loopTime) {
   Serial.print("Vcc: ");
   Serial.print(vcc);
   Serial.print("mV (");
-  Serial.print(toVoltage(vcc));
+  Serial.print((float)vcc/1000, 2);
   Serial.println("V)");
   
   Serial.print("In Gear: ** ");

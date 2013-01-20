@@ -21,7 +21,7 @@
 #define METHOD_END 15
 
 void readValues(){
-  vcc = readVCC();
+  vcc = readVcc();
   for (int g = 0; g < gears; g++) {
     values[g] = readHallEffect(gearPin[g]);
   }

@@ -91,6 +91,10 @@ void shutDown() {
   if (enableLog) writeLog(); //Save Log Values
   if (enableEEPROM) writeEEPROM(); //Save Variable State
   
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("** POWER LOST **");
+  
   if (debug) {
     saveTime = millis() - saveTime;
     Serial.println();
@@ -116,7 +120,7 @@ void shutDown() {
     Serial.print("POWER RESTORED. ");
     Serial.print(readVcc());
     Serial.println("mV");
-    Serial.println;
+    Serial.println();
   }
   return;
 }
