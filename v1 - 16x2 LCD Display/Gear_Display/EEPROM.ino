@@ -15,7 +15,16 @@ Reads and writes to and from the EEPROM for persistant storage
 #define EEPROM_ENABLE_LOG_ADDRESS 10
 #define EEPROM_DEBUG_ADDRESS 11
 
+/* Value to set in EEPROM to be sure it's been set */
 #define EEPROM_SET_VALUE 42
+
+/* EEPROM Log Addresses */
+//Based on a single starting address
+//Move the start address if EEPROM gets worn at the given start address
+int EEPROM_LOG_START_ADDRESS = 128;
+int eepromLogGearTime[1 + GEARS] = { EEPROM_LOG_START_ADDRESS, EEPROM_LOG_START_ADDRESS + 4, EEPROM_LOG_START_ADDRESS + 8, EEPROM_LOG_START_ADDRESS + 12, EEPROM_LOG_START_ADDRESS + 16, EEPROM_LOG_START_ADDRESS + 20, EEPROM_LOG_START_ADDRESS + 24};
+int eepromLogUpTime = EEPROM_LOG_START_ADDRESS + 28;
+int eepromLogShiftCount[GEARS] = {EEPROM_LOG_START_ADDRESS + 32, EEPROM_LOG_START_ADDRESS + 34, EEPROM_LOG_START_ADDRESS + 36, EEPROM_LOG_START_ADDRESS + 38, EEPROM_LOG_START_ADDRESS + 40, EEPROM_LOG_START_ADDRESS + 42};
 
 boolean readEEPROM() {
   if (EEPROM.read(EEPROM_SET_ADDRESS) != EEPROM_SET_VALUE || clearEEPROM) return false; //EEPROM not set yet

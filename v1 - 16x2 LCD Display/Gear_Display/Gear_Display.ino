@@ -90,12 +90,7 @@ unsigned long lifeTimeInGear[1 + 6]; //Life Time persists across power cycles
 unsigned long lifeUpTime = 0; //Life Time persists across power cycles
 unsigned int lifeShiftsToGear[6]; //Life Shifts persists across power cycles
 unsigned long logRefreshed = 0; //Time since log values last saved to EEPROM
-//-- EEPROM LOG ADDRESSES BASED ON START ADDRESS --
-//Move the start address if EEPROM gets worn at the given start address
-int eepromLogStartAddress = 128;
-int eepromLogGearTime[1 + 6] = { eepromLogStartAddress, eepromLogStartAddress + 4, eepromLogStartAddress + 8, eepromLogStartAddress + 12, eepromLogStartAddress + 16, eepromLogStartAddress + 20, eepromLogStartAddress + 24};
-int eepromLogUpTime = eepromLogStartAddress + 28;
-int eepromLogShiftCount[6] = {eepromLogStartAddress + 32, eepromLogStartAddress + 34, eepromLogStartAddress + 36, eepromLogStartAddress + 38, eepromLogStartAddress + 40, eepromLogStartAddress + 42};
+
 
 /*  SETUP  */
 //setup() gets called once at power on/reset of Arduino
