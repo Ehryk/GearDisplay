@@ -167,8 +167,8 @@ void menuUpPressed() {
       eepromUpdateNeeded = true;
       break;
     case MENU_BRIGHTNESS:
-      if (brightness + brightnessInterval <= 255) {
-        brightness += brightnessInterval;
+      if (brightness + BRIGHTNESS_INTERVAL <= 255) {
+        brightness += BRIGHTNESS_INTERVAL;
         eepromUpdateNeeded = true;
       }
       break;
@@ -210,8 +210,8 @@ void menuDownPressed() {
       eepromUpdateNeeded = true;
       break;
     case MENU_BRIGHTNESS:
-      if (brightness - brightnessInterval >= 0) {
-        brightness -= brightnessInterval;
+      if (brightness - BRIGHTNESS_INTERVAL >= 0) {
+        brightness -= BRIGHTNESS_INTERVAL;
         eepromUpdateNeeded = true;
       }
       break;

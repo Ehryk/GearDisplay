@@ -2,33 +2,49 @@
 Reads and writes to and from the EEPROM for persistant storage
 */
 
+/* Define EEPROM Addresses */
+#define EEPROM_SET_ADDRESS 0
+#define EEPROM_MODE_ADDRESS 1
+#define EEPROM_METHOD_ADDRESS 2
+#define EEPROM_SAVE_MODE_ADDRESS 3
+#define EEPROM_TOLERANCE_ADDRESS 4 //Reguires two bytes
+#define EEPROM_LED_ADDRESS 6
+#define EEPROM_BRIGHTNESS_ADDRESS 7
+#define EEPROM_ACCENT_ADDRESS 8
+#define EEPROM_TOLERANCE_INTERVAL_ADDRESS 9
+#define EEPROM_ENABLE_LOG_ADDRESS 10
+#define EEPROM_DEBUG_ADDRESS 11
+
+#define EEPROM_SET_VALUE 42
+
 boolean readEEPROM() {
-  if (EEPROM.read(eepromSet) != 42 || clearEEPROM) return false; //EEPROM not set yet
-  mode = EEPROM.read(eepromMode);
-  method = EEPROM.read(eepromMethod);
-  tolerance = EEPROM.read(eepromTolerance)*256 + EEPROM.read(eepromTolerance+1);
-  debug = EEPROM.read(eepromDebug);
-  led = EEPROM.read(eepromLED);
-  enableLog = EEPROM.read(eepromEnableLog);
-  toleranceInterval = EEPROM.read(eepromToleranceInterval);
-  brightness = EEPROM.read(eepromBrightness);
-  accent = EEPROM.read(eepromAccent);
+  if (EEPROM.read(EEPROM_SET_ADDRESS) != EEPROM_SET_VALUE || clearEEPROM) return false; //EEPROM not set yet
+  mode = EEPROM.read(EEPROM_MODE_ADDRESS);
+  method = EEPROM.read(EEPROM_METHOD_ADDRESS);
+  saveMode = EEPROM.read(EEPROM_SAVE_MODE_ADDRESS);
+  tolerance = EEPROM.read(EEPROM_TOLERANCE_ADDRESS)*256 + EEPROM.read(EEPROM_TOLERANCE_ADDRESS+1);
+  led = EEPROM.read(EEPROM_LED_ADDRESS);
+  brightness = EEPROM.read(EEPROM_BRIGHTNESS_ADDRESS);
+  accent = EEPROM.read(EEPROM_ACCENT_ADDRESS);
+  toleranceInterval = EEPROM.read(EEPROM_TOLERANCE_INTERVAL_ADDRESS);
+  enableLog = EEPROM.read(EEPROM_ENABLE_LOG_ADDRESS);
+  debug = EEPROM.read(EEPROM_DEBUG_ADDRESS);
   return true;
 }
 
 void writeEEPROM() {
-  EEPROM.write(eepromSet, 42); //EEPROM marked as initialized
-  EEPROM.write(eepromMode, mode);
-  EEPROM.write(eepromMethod, method);
-  EEPROM.write(eepromSaveMode, saveMode);
-  EEPROM.write(eepromTolerance, tolerance/256);
-  EEPROM.write(eepromTolerance + 1, tolerance%256);
-  EEPROM.write(eepromDebug, debug);
-  EEPROM.write(eepromEnableLog, enableLog);
-  EEPROM.write(eepromLED, led);
-  EEPROM.write(eepromToleranceInterval, toleranceInterval);
-  EEPROM.write(eepromBrightness, brightness);
-  EEPROM.write(eepromAccent, accent);
+  EEPROM.write(EEPROM_SET_ADDRESS, EEPROM_SET_VALUE); //EEPROM marked as initialized
+  EEPROM.write(EEPROM_MODE_ADDRESS, mode);
+  EEPROM.write(EEPROM_METHOD_ADDRESS, method);
+  EEPROM.write(EEPROM_SAVE_MODE_ADDRESS, saveMode);
+  EEPROM.write(EEPROM_TOLERANCE_ADDRESS, tolerance/256);
+  EEPROM.write(EEPROM_TOLERANCE_ADDRESS + 1, tolerance%256);
+  EEPROM.write(EEPROM_LED_ADDRESS, led);
+  EEPROM.write(EEPROM_BRIGHTNESS_ADDRESS, brightness);
+  EEPROM.write(EEPROM_ACCENT_ADDRESS, accent);
+  EEPROM.write(EEPROM_TOLERANCE_INTERVAL_ADDRESS, toleranceInterval);
+  EEPROM.write(EEPROM_ENABLE_LOG_ADDRESS, enableLog);
+  EEPROM.write(EEPROM_DEBUG_ADDRESS, debug);
   
   eepromLastUpdated = millis();
   eepromUpdateNeeded = false; 
@@ -79,7 +95,7 @@ void checkPowerLoss() {
 }
 
 boolean voltageLow() {
-  return readVcc() < 3900;
+  return readVcc() < LOW_VOLTAGE_LIMIT;
 }
 
 void shutDown() {
