@@ -85,7 +85,7 @@ boolean voltageLow() {
 void shutDown() {
   unsigned long saveTime = millis();
   if (!debug) {
-    digitalWrite(ledPin, LOW); //Turn Off LED
+    digitalWrite(LED_PIN, LOW); //Turn Off LED
     digitalWrite(LCD_BRIGHTNESS_PIN, LOW); //Turn Off LCD Backlight
   }
   if (enableLog) writeLog(); //Save Log Values

@@ -6,19 +6,19 @@ This controls what happens on User Input (pressing buttons)
 //and responds accordingly, passing off the press to the appropriate area
 void handleButtons() {
   //Check for Mode Press
-  if (checkPress(modePin)) {
+  if (checkPress(MODE_PIN)) {
     if (inMenu) menuModePressed();
     else if (inLog) logModePressed();
     else modePressed();
     delay(100);
     lcd.clear();
   }
-  else if (checkPress(upPin)) {
+  else if (checkPress(UP_PIN)) {
     if (inMenu) menuUpPressed();
     else if (inLog) logUpPressed();
     else upPressed();
   }
-  else if (checkPress(downPin)) {
+  else if (checkPress(DOWN_PIN)) {
     if (inMenu) menuDownPressed();
     else if (inLog) logDownPressed();
     else downPressed();

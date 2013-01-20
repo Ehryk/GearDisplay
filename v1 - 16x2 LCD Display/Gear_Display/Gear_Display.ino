@@ -6,7 +6,12 @@ Ehryk Menze
 #include <EEPROM.h>
 #include <LiquidCrystal.h>
 
-/* Define Constants */
+/* Define Pin Usage */
+//Digital Input Pins
+#define LED_PIN 2
+#define MODE_PIN 10
+#define UP_PIN 11
+#define DOWN_PIN 12
 #define LCD_RS_PIN 9
 #define LCD_ENABLE_PIN 8
 #define LCD_D4 7
@@ -22,11 +27,6 @@ LiquidCrystal lcd(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 //Configure Pins
 int gears = 6;
 int gearPin[6] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
-//Digital Input Pins
-int ledPin = 2;
-int modePin = 10;
-int upPin = 11;
-int downPin = 12;
 
 //Declare Global Variables
 //Values will range between 0 and 1023, (0V and 5V respectively)
@@ -111,16 +111,16 @@ void setup() {
   for (int g = 0; g < gears; g++) {
     pinMode(g, INPUT);
   }
-  pinMode(ledPin, OUTPUT);
-  pinMode(modePin, INPUT);
-  pinMode(upPin, INPUT);
-  pinMode(downPin, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+  pinMode(MODE_PIN, INPUT);
+  pinMode(UP_PIN, INPUT);
+  pinMode(DOWN_PIN, INPUT);
   pinMode(LCD_BRIGHTNESS_PIN, OUTPUT);
   
   //Use internal pull-up resistors
-  digitalWrite(modePin, HIGH);
-  digitalWrite(upPin, HIGH);
-  digitalWrite(downPin, HIGH);
+  digitalWrite(MODE_PIN, HIGH);
+  digitalWrite(UP_PIN, HIGH);
+  digitalWrite(DOWN_PIN, HIGH);
   
   //Set up LCD
   setLCDBrightness(brightness);
