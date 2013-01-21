@@ -31,7 +31,7 @@ void writeMenu(int menuScreen) {
       case MENU_DEBUG: writeMenuDebug(); break;
       case MENU_VOLTAGES: writeVoltages(); break;
       case MENU_VALUES: writeValues(); break;
-      case MENU_EXIT: writePrompt("EXIT MENU:"); break;
+      case MENU_EXIT: writePrompt("EXIT MENU: "); break;
     }
   }
 }
@@ -66,12 +66,15 @@ void writeMenuLED() {
   lcd.print("LED:");
   
   lcd.setCursor(0, 1);
-  if (led == LED_IN_GEAR) lcd.print("ON - In Gear");
-  else if (led == LED_NEUTRAL) lcd.print("ON - Neutral");
-  else if (led == LED_CITY)    lcd.print("ON - City");
-  else if (led == LED_HIGHWAY) lcd.print("ON - Highway");
-  else if (led == LED_ERROR)   lcd.print("ON - Error");
-  else lcd.print("OFF         ");
+  switch (led) {
+    case LED_IN_GEAR: lcd.print("ON - In Gear"); break;
+    case LED_NEUTRAL: lcd.print("ON - Neutral"); break;
+    case LED_CITY:    lcd.print("ON - City   "); break;
+    case LED_HIGHWAY: lcd.print("ON - Highway"); break;
+    case LED_ERROR:   lcd.print("ON - Error  "); break;
+    case LED_OFF:     lcd.print("OFF         ");
+    default:          lcd.print("UNKNOWN     "); break;
+  }
 }
 
 void writeMenuBrightness() {
@@ -79,13 +82,13 @@ void writeMenuBrightness() {
   lcd.print("LCD Brightness:");
   
   lcd.setCursor(0, 1);
-  lcd.print("V:");
+  lcd.print("PWM:");
   lcd.print(padLeft(brightness, 3, " "));
   
   lcd.setCursor(8, 1);
   lcd.print("(");
   lcd.print(formatPercent((float)brightness/255 * 100, 2));
-  lcd.print(")");
+  lcd.print(") ");
 }
 
 void writeMenuToleranceInterval() {

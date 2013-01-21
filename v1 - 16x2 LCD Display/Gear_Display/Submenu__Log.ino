@@ -45,7 +45,7 @@ void writeLog(int logScreen) {
       case LOG_GEAR_PERCENT: writeLogGearPercent(false); break;
       case LOG_GEAR_PERCENT_T: writeLogGearPercent(true); break;
       case LOG_CLEAR: writeLogClear(); break;
-      case LOG_EXIT: writePrompt("EXIT LOG:"); break;
+      case LOG_EXIT: writePrompt("EXIT LOG: "); break;
     }
   }
 }

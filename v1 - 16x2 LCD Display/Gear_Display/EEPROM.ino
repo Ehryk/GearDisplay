@@ -104,6 +104,13 @@ void writeULongEEPROM(int address, unsigned long v) {
   EEPROM.write(address + 3, v % 256);
 }
 
+unsigned long resetEEPROM() {
+  unsigned long resetStart = millis();
+  for (int i = 0; i < 512; i++)
+    EEPROM.write(i, 0);
+   return millis() - resetStart;
+}
+
 void checkPowerLoss() {
   powerLoss = voltageLow();
 }
