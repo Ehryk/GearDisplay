@@ -8,10 +8,12 @@ Gear Skipped Down (count each)
 Time Delay before 5th == Highway (1 minute or so)
 Time in Reverse vs Time Forward
 Percentage Reverse vs Forward
+Multiple Drivers setup - D1, D2, etc.
 
 FUTURE INPUTS
 Tachometer / RPM Reading
 Clutch Sensor to determine clutch engagement
+Throttle position sensor
 
 FEATURES WITH FUTURE INPUTS
 Determine time with clutch disengaged vs engaged in each gear
@@ -20,3 +22,12 @@ Shift out average RPM for each gear
 Shift in low RPM for each gear
 Shift out high RPM for each gear
 Average RPM for each gear
+Dynamic Shift Light - based on RPM, Throttle Position, gear, etc.
+
+FUTURE OUTPUTS
+Bluetooth Shield
+Multicolored RGB Shift/Output LED
+
+FEATURES WITH FUTURE OUTPUTS
+Connect to Phone, write mobile apps for display of data
+Change color of Shift/Output LED based on modes, conditions
