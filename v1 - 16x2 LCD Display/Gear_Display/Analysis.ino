@@ -29,6 +29,7 @@ void readValues(){
 }
 
 int readHallEffect(int pin) {
+  delay(2);
   return analogRead(pin);
 }
 
