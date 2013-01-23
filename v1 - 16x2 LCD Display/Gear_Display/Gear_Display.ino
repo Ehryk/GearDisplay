@@ -98,6 +98,7 @@ unsigned long logRefreshed = 0; //Time since log values last saved to EEPROM
 void setup() {
   // initialize serial communication at 9600 bits per second:
   Serial.begin(BAUD);
+  analogReference(DEFAULT); //Use 5v Default AREF
   
   //Set pin modes
   for (int g = 0; g < GEARS; g++) {

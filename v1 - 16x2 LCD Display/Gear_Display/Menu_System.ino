@@ -175,6 +175,7 @@ void modePressed() {
   if (mode > MODE_END) mode = MODE_BEGIN;
   else if (!debug && (mode == MODE_VOLTAGES || mode == MODE_VALUES)) mode = MODE_FILL; //Skip to Fill if not in Debug Mode
   stageEEPROM();
+  delay(200);
 }
 
 void upPressed() {

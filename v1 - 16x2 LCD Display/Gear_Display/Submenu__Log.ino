@@ -257,6 +257,7 @@ void writeLogClear() {
 void logModePressed() {
   logMode ++;
   if (logMode > LOG_END) logMode = LOG_BEGIN;
+  delay(200);
 }
 
 void logUpPressed() {

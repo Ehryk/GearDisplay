@@ -216,6 +216,7 @@ void writeVin() {
 void menuModePressed() {
   menuMode ++;
   if (menuMode > MENU_END) menuMode = MENU_BEGIN;
+  delay(200);
 }
 
 void menuUpPressed() {
