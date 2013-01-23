@@ -26,7 +26,7 @@ void handleButtons() {
 
 //Checks if a button is pressed
 boolean checkPress(int pin) {
-  return digitalRead(pin) == LOW && debounce(pin, LOW, 30, 3);
+  return digitalRead(pin) == LOW && debounce(pin, LOW, 20, 5);
 }
 
 //Software Debounce of a swtich

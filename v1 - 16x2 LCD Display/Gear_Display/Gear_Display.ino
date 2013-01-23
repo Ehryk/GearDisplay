@@ -45,7 +45,7 @@ LiquidCrystal lcd(LCD_RS_PIN, LCD_ENABLE_PIN, LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 //Values will range between 0 and 1023, (0V and 5V respectively)
 //With a Resolution of 4.9mV / unit
 int values[6];
-int theoretical = 511; //This is what should be read by the ideal Hall Effect Sensor, in a neutral magnetic environment.
+int theoretical = 511; //This is what should be read by the ideal Hall Effect Sensor, in a neutral magnetic environment. (1023 / 2)
 int numberActive = -2; //Number of gears engaged
 int method = 0; //Method of determining gear engagement (Starting at MEAN_BASED)
 int mode = 0; //Which display mode is selected
@@ -59,6 +59,7 @@ int vcc = 5000; //Voltage input in mV, should be 5000mV (5V) in theory
 int brightness = 255; //LCD Brightness
 char accent = 0; //Surrounds gear char
 int gear = -2; //Which gear is active, if any. 0 = Neutral.
+int lastGear = -2; //Which gear was last active, if any. 0 = Neutral.
 int baseline = 0; //The baseline from which any gear out of tolerance from is considered engaged
 int tolerance; //How much a gear can vary from the baseline before considered engaged
 int toleranceInterval = DEFAULT_TOLERANCE_INCREMENT; //How much to vary the tolerance on a single press
@@ -157,9 +158,11 @@ void loop() {
   readValues();
   baseline = computeBaseline(method);
   numberActive = countActive();
-  int previousGear = gear;
+  int previous = gear;
   gear = activeGear();
   inGear = gear > 0;
+  
+  if (previous > 0) lastGear = previous; // If not Neutral
   
   setLED(inGear);
   setLCDBrightness(brightness);
@@ -168,13 +171,13 @@ void loop() {
   if (enableEEPROM && eepromUpdateNeeded && eepromLastChanged >= 0 && millis() - eepromLastChanged > EEPROM_INTERVAL) writeEEPROM();
   
   if (enableLog) {
-    if (previousGear == gear) { //Remained in a gear (or neutral)
+    if (previous == gear) { //Remained in a gear (or neutral)
       timeInGear[gear] += loopTime / 100; //Store in tenths
       lifeTimeInGear[gear] += loopTime / 100;
     }
     upTime += loopTime / 100; //Loop success, increment uptime
     lifeUpTime += loopTime / 100;
-    if (previousGear == 0 && inGear) { //Shifted into a gear from Neutral
+    if (previous == 0 && inGear) { //Shifted into a gear from Neutral
       shiftsToGear[gear - 1]++;
       lifeShiftsToGear[gear - 1]++;
     }

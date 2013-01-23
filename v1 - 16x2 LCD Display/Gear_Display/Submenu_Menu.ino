@@ -13,10 +13,11 @@ It provides the ability to change variables and affect system operation
 #define MENU_DEBUG 6
 #define MENU_VOLTAGES 7
 #define MENU_VALUES 8
-#define MENU_EXIT 9
+#define MENU_V_IN 9
+#define MENU_EXIT 10
 
 #define MENU_BEGIN 0
-#define MENU_END 9
+#define MENU_END 10
 
 void writeMenu(int menuScreen) {
   if (!inMenu) writePrompt("ENTER MENU:");
@@ -31,6 +32,7 @@ void writeMenu(int menuScreen) {
       case MENU_DEBUG: writeMenuDebug(); break;
       case MENU_VOLTAGES: writeVoltages(); break;
       case MENU_VALUES: writeValues(); break;
+      case MENU_V_IN: writeVin(); break;
       case MENU_EXIT: writePrompt("EXIT MENU: "); break;
     }
   }
@@ -148,6 +150,65 @@ void writeMenuDebug() {
   else lcd.print("OFF");
 }
 
+void writeValues() {
+  lcd.setCursor(0, 0);
+  lcd.write((byte)ONE_COLON);
+  lcd.print(formatValue(values[0]));
+  lcd.print(" ");
+  
+  lcd.print("2:");
+  lcd.print(formatValue(values[1]));
+  lcd.print(" ");
+  
+  lcd.print("3:");
+  lcd.print(formatValue(values[2]));
+  
+  lcd.setCursor(0, 1);
+  lcd.write((byte)FOUR_COLON);
+  lcd.print(formatValue(values[3]));
+  lcd.print(" ");
+  
+  lcd.print("5:");
+  lcd.print(formatValue(values[4]));
+  lcd.print(" ");
+  
+  lcd.print("R:");
+  lcd.print(formatValue(values[5]));
+}
+
+void writeVoltages() {
+  lcd.setCursor(0, 0);
+  lcd.print(toVoltage(values[0]), 2);
+  lcd.print("V ");
+  
+  lcd.print(toVoltage(values[1]), 2);
+  lcd.print("V ");
+  
+  lcd.print(toVoltage(values[2]), 2);
+  
+  lcd.setCursor(0, 1);
+  lcd.print(toVoltage(values[3]), 2);
+  lcd.print("V ");
+  
+  lcd.print(toVoltage(values[4]), 2);
+  lcd.print("V ");
+  
+  lcd.print(toVoltage(values[5]), 2);
+}
+
+void writeVin() {
+  lcd.setCursor(0, 0);
+  lcd.print("Vcc: ");
+  lcd.print(padLeft(vcc, 4, " "));
+  lcd.print("mV");
+  
+  lcd.setCursor(0, 1);
+  lcd.print("Vcc: ");
+  
+  lcd.print((float)vcc/1000, 2);
+  lcd.print("V");
+}
+
 //                      //
 /* -- INPUT HANDLING -- */
 //                      //
@@ -194,8 +255,9 @@ void menuUpPressed() {
       debug = !debug;
       stageEEPROM();
       break;
-    case MENU_VOLTAGES: break;
-    case MENU_VALUES: break;
+    case MENU_VOLTAGES: writeVoltages(); break;
+    case MENU_VALUES: writeValues(); break;
+    case MENU_V_IN: writeVin(); break;
     case MENU_EXIT: inMenu = false; break;
   }
 }

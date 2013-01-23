@@ -22,6 +22,7 @@
 
 void readValues(){
   vcc = readVcc();
+  theoretical = vcc * 1023 / 1000 / 2;
   for (int g = 0; g < GEARS; g++) {
     values[g] = readHallEffect(gearPin[g]);
   }

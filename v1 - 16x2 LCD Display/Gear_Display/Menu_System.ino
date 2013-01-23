@@ -12,14 +12,15 @@ It has two submenus, Menu and Log
 #define MODE_VARIABLES 5
 #define MODE_VOLTAGES 6 //Debug Only
 #define MODE_VALUES 7 //Debug only
-#define MODE_FILL 8
-#define MODE_MENU 9
-#define MODE_LOG 10
-#define MODE_CREDITS 11
-#define MODE_DISPLAY_OFF 12
+#define MODE_V_IN 8 //Debug only
+#define MODE_FILL 9
+#define MODE_MENU 10
+#define MODE_LOG 11
+#define MODE_CREDITS 12
+#define MODE_DISPLAY_OFF 13
 
 #define MODE_BEGIN 0
-#define MODE_END 12
+#define MODE_END 13
 
 void updateDisplay(int mode, int gear) {
   switch(mode) {
@@ -31,6 +32,7 @@ void updateDisplay(int mode, int gear) {
     case MODE_VARIABLES: writeVariables(gear, false); break;
     case MODE_VOLTAGES: writeVoltages(); break;
     case MODE_VALUES: writeValues(); break;
+    case MODE_V_IN: writeVin(); break;
     case MODE_FILL: writeFill(gearChar(gear)); break;
     case MODE_MENU: writeMenu(menuMode); break;
     case MODE_LOG: writeLog(logMode); break;
@@ -145,52 +147,6 @@ void writeVariables(int g, boolean voltage) {
   lcd.print("V");
 }
 
-void writeValues() {
-  lcd.setCursor(0, 0);
-  lcd.write((byte)ONE_COLON);
-  lcd.print(formatValue(values[0]));
-  lcd.print(" ");
-  
-  lcd.print("2:");
-  lcd.print(formatValue(values[1]));
-  lcd.print(" ");
-  
-  lcd.print("3:");
-  lcd.print(formatValue(values[2]));
-  
-  lcd.setCursor(0, 1);
-  lcd.write((byte)FOUR_COLON);
-  lcd.print(formatValue(values[3]));
-  lcd.print(" ");
-  
-  lcd.print("5:");
-  lcd.print(formatValue(values[4]));
-  lcd.print(" ");
-  
-  lcd.print("R:");
-  lcd.print(formatValue(values[5]));
-}
-
-void writeVoltages() {
-  lcd.setCursor(0, 0);
-  lcd.print(toVoltage(values[0]), 2);
-  lcd.print("V ");
-  
-  lcd.print(toVoltage(values[1]), 2);
-  lcd.print("V ");
-  
-  lcd.print(toVoltage(values[2]), 2);
-  
-  lcd.setCursor(0, 1);
-  lcd.print(toVoltage(values[3]), 2);
-  lcd.print("V ");
-  
-  lcd.print(toVoltage(values[4]), 2);
-  lcd.print("V ");
-  
-  lcd.print(toVoltage(values[5]), 2);
-}
-
 void writeFill(char c) {
   lcd.setCursor(0, 0);
   for (int column = 0; column < 16; column ++) {
@@ -217,7 +173,7 @@ void writeCredits() {
 void modePressed() {
   mode++;
   if (mode > MODE_END) mode = MODE_BEGIN;
-  else if (!debug && (mode == MODE_VOLTAGES || mode == MODE_VALUES)) mode = MODE_MENU; //Skip to Menu if not in Debug Mode
+  else if (!debug && (mode == MODE_VOLTAGES || mode == MODE_VALUES)) mode = MODE_FILL; //Skip to Fill if not in Debug Mode
   stageEEPROM();
 }
 
