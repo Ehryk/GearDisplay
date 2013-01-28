@@ -39,6 +39,8 @@ void updateDisplay(int mode, int gear) {
     case MODE_CREDITS: writeCredits(); break;
     case MODE_DISPLAY_OFF: break;
   }
+  
+  displayLastUpdated = millis();
 }
 
 void writePrompt(char* title) {

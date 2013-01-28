@@ -64,7 +64,10 @@ int baseline = 0; //The baseline from which any gear out of tolerance from is co
 int tolerance; //How much a gear can vary from the baseline before considered engaged
 int toleranceInterval = DEFAULT_TOLERANCE_INCREMENT; //How much to vary the tolerance on a single press
 boolean inGear = false; //Whether or not the vehicle is in a gear
-int led = 1; //Whether or not to light the LED when a gear is engaged (default), neutral, or off
+int led = 1; //Status of when to light the LED when a gear is engaged (default), neutral, or off
+boolean updateNeeded = 0; //Whether or not to update the display immediately
+unsigned long displayLastUpdated = 0; //When the display was last updated
+unsigned long updateInterval = 500; //When to update the display between non-immediate updates
 
 unsigned long lastLoopStart = 0;
 
@@ -164,6 +167,7 @@ void loop() {
   inGear = gear > 0;
   
   if (previous > 0) lastGear = previous; // If not Neutral
+  updateNeeded = previous != gear;
   
   setLED(inGear);
   setLCDBrightness(brightness);
@@ -194,6 +198,7 @@ void loop() {
   if (debug && millis() - debugRefresh > DEBUG_INTERVAL) writeDebug(loopTime);
   
   //Update the display
-  updateDisplay(mode, gear);
+  if (updateNeeded || millis() - displayLastUpdated > updateInterval)
+    updateDisplay(mode, gear);
 }
 
