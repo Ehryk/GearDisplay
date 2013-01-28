@@ -5,7 +5,14 @@ PWM (Pulse Width Modulation)
 Pins 3, 5, 6, 9, 10, 11
 
 Digital Pins have internal pull-up resistors only (20k Ohm)
+
 Pin 13: LED (1k Ohm Resistor)
+
+Hardware Interrupts *
+Pin 2: Interrupt 0
+Pin 3: Interrupt 1
+Example: attachInterrupt(Interrupt_Number, function, TYPE);
+TYPES: LOW, CHANGE, RISING, FALLING (Due Only: HIGH)
 
 Serial communication:
 Pin 0: Rx
@@ -26,3 +33,5 @@ LEDs:
 + Anode - Longer Leg, Round Side
 
 The Touchscreen uses has details here: http://www.elecfreaks.com/wiki/index.php?title=2.4%22_TFT_LCD:_TFT01-2.4
+
+* Note on Interrupt Functions: Inside the attached function, delay() won't work and the value returned by millis() will not increment. Serial data received while in the function may be lost. You should declare as volatile any variables that you modify within the attached function.
