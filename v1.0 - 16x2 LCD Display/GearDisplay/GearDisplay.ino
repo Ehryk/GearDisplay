@@ -31,8 +31,8 @@ int gearPin[GEARS] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
 #define DEFAULT_UPDATE_INTERVAL 300 //Initial Update Interval Value
 #define DEFAULT_BRIGHTNESS 255 //Initial Brightness Value
 #define BRIGHTNESS_INTERVAL 15 //LCD Brightness Increment to increase/decrease by (PWM, ranges from 0-255)
-#define ACCENT_COUNT 11
-const char accents[ACCENT_COUNT] = {'-', '*', '.', '~', '=', '#', '+', '\'', ':', '_', '^'};
+#define ACCENT_COUNT 15
+const char accents[ACCENT_COUNT] = {'-', '*', '.', '~', '=', '#', '+', '\'', ':', '_', '^', (char)161, (char)165, (char)223, (char)243};
 #define DEBUG_INTERVAL 1000 //How often to output Debug information, in milliseconds
 #define EEPROM_INTERVAL 5000 //How often to wait after last change to write to EEPROM
 #define LOG_INTERVAL 60000 //How often to auto-save Log information to EEPROM, in milliseconds
