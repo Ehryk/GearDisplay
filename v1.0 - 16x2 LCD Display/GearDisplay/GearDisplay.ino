@@ -28,11 +28,11 @@ int gearPin[GEARS] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
 #define BAUD 9600 //Used for Serial communication
 #define DEFAULT_TOLERANCE 100 //Initial Tolerance Value
 #define DEFAULT_TOLERANCE_INCREMENT 5 //Initial Tolerance Increment/Decrement Value
+#define DEFAULT_UPDATE_INTERVAL 300 //Initial Update Interval Value
 #define DEFAULT_BRIGHTNESS 255 //Initial Brightness Value
 #define BRIGHTNESS_INTERVAL 15 //LCD Brightness Increment to increase/decrease by (PWM, ranges from 0-255)
-#define LOW_VOLTAGE_LIMIT 3900 //How low in mV on VCC Before ShutDown() (Save values to EEPROM). Set above 5000 to disable when not using a large capacitor to keep alive post-power cut (Needs about 200ms)
-#define ACCENT_COUNT 5
-const char accents[ACCENT_COUNT] = {'-', '*', '.', '~', '='};
+#define ACCENT_COUNT 11
+const char accents[ACCENT_COUNT] = {'-', '*', '.', '~', '=', '#', '+', '\'', ':', '_', '^'};
 #define DEBUG_INTERVAL 1000 //How often to output Debug information, in milliseconds
 #define EEPROM_INTERVAL 5000 //How often to wait after last change to write to EEPROM
 #define LOG_INTERVAL 60000 //How often to auto-save Log information to EEPROM, in milliseconds
@@ -56,18 +56,19 @@ boolean inLog = false; //Whether the user is in the log system
 int logMode = 0; //Which log mode is selected
 int screenMode = 0; //Which 'version' of a given screen is being displayed
 int vcc = 5000; //Voltage input in mV, should be 5000mV (5V) in theory
-int brightness = 255; //LCD Brightness
+int brightness = DEFAULT_BRIGHTNESS; //LCD Brightness
 char accent = 0; //Surrounds gear char
 int gear = -2; //Which gear is active, if any. 0 = Neutral.
 int lastGear = -2; //Which gear was last active, if any. 0 = Neutral.
 int baseline = 0; //The baseline from which any gear out of tolerance from is considered engaged
-int tolerance; //How much a gear can vary from the baseline before considered engaged
+int tolerance = DEFAULT_TOLERANCE; //How much a gear can vary from the baseline before considered engaged
 int toleranceInterval = DEFAULT_TOLERANCE_INCREMENT; //How much to vary the tolerance on a single press
 boolean inGear = false; //Whether or not the vehicle is in a gear
 int led = 1; //Status of when to light the LED when a gear is engaged (default), neutral, or off
-boolean updateNeeded = 0; //Whether or not to update the display immediately
+int lowVoltage = 3900; //How low in mV on VCC Before ShutDown() (Save values to EEPROM). Set to 0 to disable when not using a large capacitor to keep alive post-power cut (Needs about 200ms)
+boolean updateNeeded = false; //Whether or not to update the display immediately
 unsigned long displayLastUpdated = 0; //When the display was last updated
-unsigned long updateInterval = 500; //When to update the display between non-immediate updates
+unsigned long updateInterval = DEFAULT_UPDATE_INTERVAL; //When to update the display between non-immediate updates
 
 unsigned long lastLoopStart = 0;
 
@@ -124,8 +125,6 @@ void setup() {
   lcd.begin(16, 2);
   createCustomCharacters();
   
-  tolerance = DEFAULT_TOLERANCE;
-  
   //Initialize Log
   timeInGear[0] = 0;
   for (int g = 0; g < GEARS; g++) {
@@ -136,7 +135,7 @@ void setup() {
   //Read from EEPROM
   if (clearEEPROM) EEPROM.write(0, 0);
   if (enableEEPROM) readEEPROM();
-  if (enableLog && !clearLog) readLog();
+  if (enableLog && !clearLogBoolean) readLog();
   
   writeCredits();
   delay(1500);

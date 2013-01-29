@@ -11,16 +11,19 @@ void handleButtons() {
     else if (inLog) logModePressed();
     else modePressed();
     lcd.clear();
+    updateNeeded = true;
   }
   else if (checkPress(UP_PIN)) {
     if (inMenu) menuUpPressed();
     else if (inLog) logUpPressed();
     else upPressed();
+    updateNeeded = true;
   }
   else if (checkPress(DOWN_PIN)) {
     if (inMenu) menuDownPressed();
     else if (inLog) logDownPressed();
     else downPressed();
+    updateNeeded = true;
   }
 }
 

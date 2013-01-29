@@ -30,9 +30,9 @@ void updateDisplay(int mode, int gear) {
     case MODE_ADVANCED_S: writeAdvanced(gear, accentChar(accent)); break;
     case MODE_VARIABLES_V: writeVariables(gear, true); break;
     case MODE_VARIABLES: writeVariables(gear, false); break;
-    case MODE_VOLTAGES: writeVoltages(); break;
-    case MODE_VALUES: writeValues(); break;
-    case MODE_V_IN: writeVin(); break;
+    case MODE_VOLTAGES: writeMenuVoltages(); break;
+    case MODE_VALUES: writeMenuValues(); break;
+    case MODE_V_IN: writeMenuVin(); break;
     case MODE_FILL: writeFill(gearChar(gear)); break;
     case MODE_MENU: writeMenu(menuMode); break;
     case MODE_LOG: writeLog(logMode); break;
@@ -181,27 +181,41 @@ void modePressed() {
 }
 
 void upPressed() {
-  if (!inMenu && mode == MODE_MENU) {
-    inMenu = true;
-  }
-  else if (!inLog && mode == MODE_LOG) {
-    inLog = true;
-  }
-  else if (tolerance + toleranceInterval <= 1023) {
-    tolerance += toleranceInterval;
-    stageEEPROM();
+  switch(mode) {
+    case MODE_MENU: inMenu = true; break;
+    case MODE_LOG: inLog = true; break;
+    case MODE_V_IN: 
+      if (lowVoltage < 5000) {
+        lowVoltage += 100;
+        if (lowVoltage < 3000) lowVoltage = 3000;
+        stageEEPROM();
+      }
+      break;
+    default: 
+      if (tolerance + toleranceInterval <= 1023) {
+        tolerance += toleranceInterval;
+        stageEEPROM();
+      }
+      break;
   }
 }
 
 void downPressed() {
-  if (!inMenu && mode == MODE_MENU) {
-    inMenu = true;
-  }
-  else if (!inLog && mode == MODE_LOG) {
-    inLog = true;
-  }
-  else if (tolerance - toleranceInterval >= 0) {
-    tolerance -= toleranceInterval;
-    stageEEPROM();
+  switch(mode) {
+    case MODE_MENU: inMenu = true; break;
+    case MODE_LOG: inLog = true; break;
+    case MODE_V_IN: 
+      if (lowVoltage > 0) {
+        lowVoltage -= 100;
+        if (lowVoltage < 3000) lowVoltage = 0;
+        stageEEPROM();
+      }
+      break;
+    default: 
+      if (tolerance - toleranceInterval > 0) {
+        tolerance -= toleranceInterval;
+        stageEEPROM();
+      }
+      break;
   }
 }

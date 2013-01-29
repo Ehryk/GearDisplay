@@ -14,6 +14,8 @@ Reads and writes to and from the EEPROM for persistant storage
 #define EEPROM_TOLERANCE_INTERVAL_ADDRESS 9
 #define EEPROM_ENABLE_LOG_ADDRESS 10
 #define EEPROM_DEBUG_ADDRESS 11
+#define EEPROM_UPDATE_ADDRESS 12 //Reguires two bytes
+#define EEPROM_LOW_VOLTAGE_ADDRESS 14 //Reguires two bytes
 
 /* Value to set in EEPROM to be sure it's been set */
 #define EEPROM_SET_VALUE 42
@@ -31,13 +33,15 @@ boolean readEEPROM() {
   mode = EEPROM.read(EEPROM_MODE_ADDRESS);
   method = EEPROM.read(EEPROM_METHOD_ADDRESS);
   saveMode = EEPROM.read(EEPROM_SAVE_MODE_ADDRESS);
-  tolerance = EEPROM.read(EEPROM_TOLERANCE_ADDRESS)*256 + EEPROM.read(EEPROM_TOLERANCE_ADDRESS+1);
+  tolerance = readUIntEEPROM(EEPROM_TOLERANCE_ADDRESS);
   led = EEPROM.read(EEPROM_LED_ADDRESS);
   brightness = EEPROM.read(EEPROM_BRIGHTNESS_ADDRESS);
   accent = EEPROM.read(EEPROM_ACCENT_ADDRESS);
   toleranceInterval = EEPROM.read(EEPROM_TOLERANCE_INTERVAL_ADDRESS);
   enableLog = EEPROM.read(EEPROM_ENABLE_LOG_ADDRESS);
   debug = EEPROM.read(EEPROM_DEBUG_ADDRESS);
+  updateInterval = readUIntEEPROM(EEPROM_UPDATE_ADDRESS);
+  lowVoltage = readUIntEEPROM(EEPROM_LOW_VOLTAGE_ADDRESS);
   return true;
 }
 
@@ -46,14 +50,15 @@ void writeEEPROM() {
   EEPROM.write(EEPROM_MODE_ADDRESS, mode);
   EEPROM.write(EEPROM_METHOD_ADDRESS, method);
   EEPROM.write(EEPROM_SAVE_MODE_ADDRESS, saveMode);
-  EEPROM.write(EEPROM_TOLERANCE_ADDRESS, tolerance/256);
-  EEPROM.write(EEPROM_TOLERANCE_ADDRESS + 1, tolerance%256);
+  writeUIntEEPROM(EEPROM_TOLERANCE_ADDRESS, tolerance);
   EEPROM.write(EEPROM_LED_ADDRESS, led);
   EEPROM.write(EEPROM_BRIGHTNESS_ADDRESS, brightness);
   EEPROM.write(EEPROM_ACCENT_ADDRESS, accent);
   EEPROM.write(EEPROM_TOLERANCE_INTERVAL_ADDRESS, toleranceInterval);
   EEPROM.write(EEPROM_ENABLE_LOG_ADDRESS, enableLog);
   EEPROM.write(EEPROM_DEBUG_ADDRESS, debug);
+  writeUIntEEPROM(EEPROM_UPDATE_ADDRESS, updateInterval);
+  writeUIntEEPROM(EEPROM_LOW_VOLTAGE_ADDRESS, lowVoltage);
   
   eepromLastUpdated = millis();
   eepromUpdateNeeded = false; 
@@ -85,22 +90,22 @@ void writeLog() {
 }
 
 unsigned long readUIntEEPROM(int address) {
-  return EEPROM.read(address)*256 + EEPROM.read(address+1);
+  return (EEPROM.read(address) << 8) + EEPROM.read(address+1);
 }
 
 void writeUIntEEPROM(int address, unsigned int v) {
-  EEPROM.write(address, (v / 256) % 256);
+  EEPROM.write(address, (v >> 8) % 256);
   EEPROM.write(address + 1, v % 256);
 }
 
 unsigned long readULongEEPROM(int address) {
-  return EEPROM.read(address)*16777216 + EEPROM.read(address+1)*65536 + EEPROM.read(address+2)*256 + EEPROM.read(address+3);
+  return (EEPROM.read(address) << 24) + (EEPROM.read(address+1) << 16) + (EEPROM.read(address+2) << 8) + EEPROM.read(address+3);
 }
 
 void writeULongEEPROM(int address, unsigned long v) {
-  EEPROM.write(address, (v / 16777216) % 256);
-  EEPROM.write(address + 1, (v / 65536) % 256);
-  EEPROM.write(address + 2, (v / 256) % 256);
+  EEPROM.write(address, (v >> 24) % 256);
+  EEPROM.write(address + 1, (v >> 16) % 256);
+  EEPROM.write(address + 2, (v >> 8) % 256);
   EEPROM.write(address + 3, v % 256);
 }
 
@@ -116,7 +121,8 @@ void checkPowerLoss() {
 }
 
 boolean voltageLow() {
-  return readVcc() < LOW_VOLTAGE_LIMIT;
+  if (lowVoltage == 0) return false;
+  return readVcc() < lowVoltage;
 }
 
 void shutDown() {
@@ -125,6 +131,7 @@ void shutDown() {
     digitalWrite(LED_PIN, LOW); //Turn Off LED
     digitalWrite(LCD_BRIGHTNESS_PIN, LOW); //Turn Off LCD Backlight
   }
+  else analogWrite(LCD_BRIGHTNESS_PIN, 30);
   if (enableLog) writeLog(); //Save Log Values
   if (enableEEPROM) writeEEPROM(); //Save Variable State
   
@@ -160,4 +167,26 @@ void shutDown() {
     Serial.println();
   }
   return;
+}
+
+void clearLog(boolean lifeTime) {
+  timeInGear[0] = 0;
+  for (int i = 0; i < GEARS; i++) {
+    timeInGear[i + 1] = 0;
+    shiftsToGear[i] = 0;
+  }
+  
+  if (lifeTime) {
+    lifeTimeInGear[0] = 0;
+    for (int i = 0; i < GEARS; i++) {
+      lifeTimeInGear[i + 1] = 0;
+      lifeShiftsToGear[i] = 0;
+    }
+    writeLog();
+  }
+  
+  lcd.setCursor(0, 1);
+  if (lifeTime) lcd.print("  Life Cleared! ");
+  else lcd.print("  Trip Cleared! ");
+  delay(2000);
 }
