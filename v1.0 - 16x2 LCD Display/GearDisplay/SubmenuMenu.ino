@@ -46,22 +46,22 @@ void writeMenuMethod() {
   
   lcd.setCursor(0, 1);
   switch(method) {
-    case MEAN_BASED:          lcd.print("Mean (Default)  "); break;
-    case TRIM1_MEAN:          lcd.print("Trim 1 - Mean   "); break;
-    case TRIM1_THEORETICAL:   lcd.print("Trim 1 - Theory "); break;
-    case TRIM1_HIGHEST:       lcd.print("Trim 1 - Highest"); break;
-    case TRIM1_LOWEST:        lcd.print("Trim 1 - Lowest "); break;
-    case TRIM2_MEAN:          lcd.print("Trim 2 - Mean   "); break;
-    case TRIM2_THEORETICAL:   lcd.print("Trim 2 - Theory "); break;
-    case TRIM2_HIGHEST:       lcd.print("Trim 2 - Highest"); break;
-    case TRIM2_LOWEST:        lcd.print("Trim 2 - Lowest "); break;
-    case TRIM3_MEAN:          lcd.print("Trim 3 - Mean   "); break;
-    case TRIM3_THEORETICAL:   lcd.print("Trim 3 - Theory "); break;
-    case TRIM3_HIGHEST:       lcd.print("Trim 3 - Highest"); break;
-    case TRIM3_LOWEST:        lcd.print("Trim 3 - Lowest "); break;
-    case THEORETICAL:         lcd.print("Theoretical     "); break;
-    case LOW_BASED:           lcd.print("Low  (0 VDC)    "); break;
-    case HIGH_BASED:          lcd.print("High (+5 VDC)   "); break;
+    case METHOD_MEAN_BASED:        lcd.print("Mean (Default)  "); break;
+    case METHOD_TRIM1_MEAN:        lcd.print("Trim 1 - Mean   "); break;
+    case METHOD_TRIM1_THEORETICAL: lcd.print("Trim 1 - Theory "); break;
+    case METHOD_TRIM1_HIGHEST:     lcd.print("Trim 1 - Highest"); break;
+    case METHOD_TRIM1_LOWEST:      lcd.print("Trim 1 - Lowest "); break;
+    case METHOD_TRIM2_MEAN:        lcd.print("Trim 2 - Mean   "); break;
+    case METHOD_TRIM2_THEORETICAL: lcd.print("Trim 2 - Theory "); break;
+    case METHOD_TRIM2_HIGHEST:     lcd.print("Trim 2 - Highest"); break;
+    case METHOD_TRIM2_LOWEST:      lcd.print("Trim 2 - Lowest "); break;
+    case METHOD_TRIM3_MEAN:        lcd.print("Trim 3 - Mean   "); break;
+    case METHOD_TRIM3_THEORETICAL: lcd.print("Trim 3 - Theory "); break;
+    case METHOD_TRIM3_HIGHEST:     lcd.print("Trim 3 - Highest"); break;
+    case METHOD_TRIM3_LOWEST:      lcd.print("Trim 3 - Lowest "); break;
+    case METHOD_THEORETICAL:       lcd.print("Theoretical     "); break;
+    case METHOD_LOW_BASED:         lcd.print("Low  (0 VDC)    "); break;
+    case METHOD_HIGH_BASED:        lcd.print("High (+5 VDC)   "); break;
   }
 }
 

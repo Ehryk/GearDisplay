@@ -97,11 +97,7 @@ void writeAdvanced(int g, char s) {
     lcd.print("V");
   }
   else {
-    if (method == MEAN_BASED) lcd.print("A:");
-    else if (method == THEORETICAL) lcd.print("Y:");
-    else if (method == LOW_BASED) lcd.print("L:");
-    else if (method == HIGH_BASED) lcd.print("H:");
-    else lcd.print("B:");
+    writeMethodChar(method);
     lcd.print(toVoltage(baseline));
     lcd.print("V");
   }
@@ -140,11 +136,7 @@ void writeVariables(int g, boolean voltage) {
   
   //Print Baseline Voltage
   lcd.setCursor(9, 1);
-  if (method == MEAN_BASED) lcd.print("A:");
-  else if (method == THEORETICAL) lcd.print("Y:");
-  else if (method == LOW_BASED) lcd.print("L:");
-  else if (method == HIGH_BASED) lcd.print("H:");
-  else lcd.print("B:");
+  writeMethodChar(method);
   lcd.print(toVoltage(baseline), 2);
   lcd.print("V");
 }

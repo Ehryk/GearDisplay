@@ -22,6 +22,7 @@ Ehryk Menze
 #define MODE_PIN 10
 #define UP_PIN 11
 #define DOWN_PIN 12
+#define LED2_PIN 13
 int gearPin[GEARS] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
 
 /* Compiler Constants, Defaults */

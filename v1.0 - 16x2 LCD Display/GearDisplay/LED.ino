@@ -14,10 +14,17 @@ Handles the LED
 #define LED_END 5
 
 void setLED(boolean engaged) {
-  if (led == LED_IN_GEAR && engaged) digitalWrite(LED_PIN, HIGH);
-  else if (led == LED_NEUTRAL && !engaged) digitalWrite(LED_PIN, HIGH);
-  else if (led == LED_CITY && engaged && gear != 5) digitalWrite(LED_PIN, HIGH);
-  else if (led == LED_HIGHWAY && engaged && gear == 5) digitalWrite(LED_PIN, HIGH);
-  else if (led == LED_ERROR && gear < 0) digitalWrite(LED_PIN, HIGH);
-  else digitalWrite(LED_PIN, LOW);
+  if (led == LED_IN_GEAR && engaged) _LED(true);
+  else if (led == LED_NEUTRAL && !engaged) _LED(true);
+  else if (led == LED_CITY && engaged && gear != 5) _LED(true);
+  else if (led == LED_HIGHWAY && engaged && gear == 5) _LED(true);
+  else if (led == LED_ERROR && gear < 0) _LED(true);
+  else _LED(false);
+}
+
+void _LED(boolean on) {
+  int v;
+  if (on) v = HIGH; else v = LOW;
+  digitalWrite(LED_PIN, v);
+  digitalWrite(LED2_PIN, v);
 }

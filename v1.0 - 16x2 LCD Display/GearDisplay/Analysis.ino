@@ -1,57 +1,79 @@
 
 //Methods of computation baselines
-#define MEAN_BASED 0
-#define TRIM1_MEAN 1
-#define TRIM1_THEORETICAL 2
-#define TRIM1_HIGHEST 3
-#define TRIM1_LOWEST 4
-#define TRIM2_MEAN 5
-#define TRIM2_THEORETICAL 6
-#define TRIM2_HIGHEST 7
-#define TRIM2_LOWEST 8
-#define TRIM3_MEAN 9
-#define TRIM3_THEORETICAL 10
-#define TRIM3_HIGHEST 11
-#define TRIM3_LOWEST 12
-#define THEORETICAL 13
-#define LOW_BASED 14
-#define HIGH_BASED 15
+#define METHOD_MEAN_BASED 0
+#define METHOD_TRIM1_MEAN 1
+#define METHOD_TRIM1_THEORETICAL 2
+#define METHOD_TRIM1_HIGHEST 3
+#define METHOD_TRIM1_LOWEST 4
+#define METHOD_TRIM2_MEAN 5
+#define METHOD_TRIM2_THEORETICAL 6
+#define METHOD_TRIM2_HIGHEST 7
+#define METHOD_TRIM2_LOWEST 8
+#define METHOD_TRIM3_MEAN 9
+#define METHOD_TRIM3_THEORETICAL 10
+#define METHOD_TRIM3_HIGHEST 11
+#define METHOD_TRIM3_LOWEST 12
+#define METHOD_THEORETICAL 13
+#define METHOD_LOW_BASED 14
+#define METHOD_HIGH_BASED 15
 
 #define METHOD_BEGIN 0
 #define METHOD_END 15
 
+int fineAdjust[GEARS] = {-5, 5, 4, -5, 4, -8};
+//int fineAdjust[GEARS] = {0, 0, 0, 0, 0, 0};
+
+
 void readValues(){
   vcc = readVcc();
-  theoretical = vcc * 1023 / 1000 / 2;
+  theoretical = vcc * 1023.0 / 1000.0 / 2.0;
   for (int g = 0; g < GEARS; g++) {
     values[g] = readHallEffect(gearPin[g]);
   }
 }
 
 int readHallEffect(int pin) {
-  delay(2);
-  return analogRead(pin);
+  analogRead(pin); //Switch mux to pin
+  delay(2); //Allow voltage to settle
+  return analogRead(pin) + fineAdjust[pin];
 }
 
 int computeBaseline(int m) {
-  if (m == MEAN_BASED) return getMean();
-  else if (m == TRIM1_MEAN) return getTrimmed(getMean(), 1);
-  else if (m == TRIM1_THEORETICAL) return getTrimmed(theoretical, 1);
-  else if (m == TRIM1_HIGHEST) return getTrimmed(0, 1);
-  else if (m == TRIM1_LOWEST) return getTrimmed(1023, 1);
-  else if (m == TRIM2_MEAN) return getTrimmed(getMean(), 2);
-  else if (m == TRIM2_THEORETICAL) return getTrimmed(theoretical, 2);
-  else if (m == TRIM2_HIGHEST) return getTrimmed(0, 2);
-  else if (m == TRIM2_LOWEST) return getTrimmed(1023, 2);
-  else if (m == TRIM3_MEAN) return getTrimmed(getMean(), 3);
-  else if (m == TRIM3_THEORETICAL) return getTrimmed(theoretical, 3);
-  else if (m == TRIM3_HIGHEST) return getTrimmed(0, 3);
-  else if (m == TRIM3_LOWEST) return getTrimmed(1023, 3);
-  else if (m == THEORETICAL) return theoretical;
-  else if (m == LOW_BASED) return 0;
-  else if (m == HIGH_BASED) return 1023;
-  
-  return -1;
+  switch (m) {
+    case(METHOD_MEAN_BASED): return getMean();
+    case(METHOD_TRIM1_MEAN): return getTrimmed(getMean(), 1);
+    case(METHOD_TRIM1_THEORETICAL): return getTrimmed(theoretical, 1);
+    case(METHOD_TRIM1_HIGHEST): return getTrimmed(0, 1);
+    case(METHOD_TRIM1_LOWEST): return getTrimmed(1023, 1);
+    case(METHOD_TRIM2_MEAN): return getTrimmed(getMean(), 2);
+    case(METHOD_TRIM2_THEORETICAL): return getTrimmed(theoretical, 2);
+    case(METHOD_TRIM2_HIGHEST): return getTrimmed(0, 2);
+    case(METHOD_TRIM2_LOWEST): return getTrimmed(1023, 2);
+    case(METHOD_TRIM3_MEAN): return getTrimmed(getMean(), 3);
+    case(METHOD_TRIM3_THEORETICAL): return getTrimmed(theoretical, 3);
+    case(METHOD_TRIM3_HIGHEST): return getTrimmed(0, 3);
+    case(METHOD_TRIM3_LOWEST): return getTrimmed(1023, 3);
+    case(METHOD_THEORETICAL): return theoretical;
+    case(METHOD_LOW_BASED): return 0;
+    case(METHOD_HIGH_BASED): return 1023;
+    
+    default: return -1;
+  }
+}
+
+char methodChar(int m) {
+  switch (m) {
+    case (METHOD_MEAN_BASED): return 'A';
+    case (METHOD_THEORETICAL): return 'Y';
+    case (METHOD_LOW_BASED): return 'L';
+    case (METHOD_HIGH_BASED): return 'H';
+    default: return 'B';
+  }
+}
+
+void writeMethodChar(int m) {
+  lcd.print(methodChar(m));
+  lcd.print(':');
 }
 
 int getMean() {
