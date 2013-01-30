@@ -87,6 +87,6 @@ long readVcc() {
   while (bit_is_set(ADCSRA,ADSC));
   result = ADCL;
   result |= ADCH<<8;
-  result = 1126400L / result; // Back-calculate AVcc in mV
+  result = 1108000L / result; // Back-calculate AVcc in mV
   return result;
 }
