@@ -40,6 +40,7 @@ void updateDisplay(int mode, int gear) {
     case MODE_DISPLAY_OFF: break;
   }
   
+  displayOff = mode == MODE_DISPLAY_OFF;
   displayLastUpdated = millis();
 }
 

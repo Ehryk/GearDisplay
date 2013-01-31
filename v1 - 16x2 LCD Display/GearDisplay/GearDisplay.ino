@@ -68,6 +68,7 @@ boolean inGear = false; //Whether or not the vehicle is in a gear
 int led = 1; //Status of when to light the LED when a gear is engaged (default), neutral, or off
 int lowVoltage = 3900; //How low in mV on VCC Before ShutDown() (Save values to EEPROM). Set to 0 to disable when not using a large capacitor to keep alive post-power cut (Needs about 200ms)
 boolean updateNeeded = false; //Whether or not to update the display immediately
+boolean displayOff = false;
 unsigned long displayLastUpdated = 0; //When the display was last updated
 unsigned long updateInterval = DEFAULT_UPDATE_INTERVAL; //When to update the display between non-immediate updates
 

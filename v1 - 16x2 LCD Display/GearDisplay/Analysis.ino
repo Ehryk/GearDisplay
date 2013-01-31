@@ -23,7 +23,6 @@
 int fineAdjust[GEARS] = {-5, 5, 4, -5, 4, -8};
 //int fineAdjust[GEARS] = {0, 0, 0, 0, 0, 0};
 
-
 void readValues(){
   vcc = readVcc();
   theoretical = vcc * 1023.0 / 1000.0 / 2.0;
