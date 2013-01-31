@@ -28,9 +28,9 @@ td {
 </head>
 
 <body>
-<h1>Bill of Materials: Schematic v1.1 - For Casing.fzz</h1>
-<p class="meta">C:\Projects\GearDisplay\v1.1 - 16x2 LCD Display in Casing\Schematic v1.1 - For Casing.fzz</p>
-<p class="meta">Monday, January 28 2013, 11:47:44</p>
+<h1>Bill of Materials: Schematic v2.fzz</h1>
+<p class="meta">C:\Projects\GearDisplay\v2 - 16x2 LCD Display in Casing\Schematic v2.fzz</p>
+<p class="meta">Thursday, January 31 2013, 07:00:55</p>
 
 <h2>Assembly List</h2>
 <table>
@@ -52,21 +52,29 @@ td {
     <td>Arduino</td>
     <td class="props">processor ATmega; variant Arduino</td>
 </tr><tr>
-    <td>C_input 100uF</td>
+    <td>Cin</td>
     <td>Electrolytic Capacitor</td>
     <td class="props">package 100 mil [THT, electrolytic]; capacitance 10µF; voltage 6.3V</td>
 </tr><tr>
-    <td>C_output 10uF</td>
+    <td>Cosc</td>
+    <td>Ceramic Capacitor</td>
+    <td class="props">package 100 mil [THT, multilayer]; capacitance 100nF; voltage 6.3V</td>
+</tr><tr>
+    <td>Cout</td>
     <td>Electrolytic Capacitor</td>
     <td class="props">package 100 mil [THT, electrolytic]; capacitance 0.1mF; voltage 6.3V</td>
 </tr><tr>
-    <td>D1</td>
-    <td>Schottky Diode</td>
-    <td class="props">package 300 mil [THT]; type Schottky; part # 1N5817</td>
+    <td>Dclamp</td>
+    <td>Zener Diode</td>
+    <td class="props">package 300 mil [THT]; breakdown voltage 9.1V; type Zener; power dissipation 0.5W; part # 1N4732A</td>
 </tr><tr>
     <td>Down (-)</td>
     <td>Pushbutton</td>
     <td class="props">package [THT]</td>
+</tr><tr>
+    <td>Duc</td>
+    <td>Schottky Diode</td>
+    <td class="props">package 300 mil [THT]; type Schottky; part # 1N5817</td>
 </tr><tr>
     <td>Hall Effect 1st Gear</td>
     <td>LM35 Temperature Sensor</td>
@@ -88,17 +96,37 @@ td {
     <td>LM35 Temperature Sensor</td>
     <td class="props">package TO92 [THT]; type LM35</td>
 </tr><tr>
-    <td>Hall Effect Power</td>
-    <td>Screw terminal - 2 pins</td>
-    <td class="props">package THT; hole size 1.0mm,0.508mm; pins 2; pin spacing 0.137in (3.5mm)</td>
-</tr><tr>
     <td>Hall Effect Reverse</td>
     <td>LM35 Temperature Sensor</td>
     <td class="props">package TO92 [THT]; type LM35</td>
 </tr><tr>
-    <td>Hall Effect Signals</td>
+    <td>HE Power</td>
+    <td>Screw terminal - 2 pins</td>
+    <td class="props">package THT; hole size 1.0mm,0.508mm; pins 2; pin spacing 0.137in (3.5mm)</td>
+</tr><tr>
+    <td>HE Signals</td>
     <td>Screw terminal - 6 pins</td>
     <td class="props">package THT; hole size 1.0mm,0.508mm; pins 6; pin spacing 0.137in (3.5mm)</td>
+</tr><tr>
+    <td>J+</td>
+    <td>0 Ω Resistor</td>
+    <td class="props">package 0805 [SMD]; tolerance ±5%; resistance 0Ω</td>
+</tr><tr>
+    <td>J-</td>
+    <td>0 Ω Resistor</td>
+    <td class="props">package 0805 [SMD]; tolerance ±5%; resistance 0Ω</td>
+</tr><tr>
+    <td>Jard</td>
+    <td>0 Ω Resistor</td>
+    <td class="props">package 0805 [SMD]; tolerance ±5%; resistance 0Ω</td>
+</tr><tr>
+    <td>Jm</td>
+    <td>0 Ω Resistor</td>
+    <td class="props">package 0805 [SMD]; tolerance ±5%; resistance 0Ω</td>
+</tr><tr>
+    <td>Jvin</td>
+    <td>0 Ω Resistor</td>
+    <td class="props">package 0805 [SMD]; tolerance ±5%; resistance 0Ω</td>
 </tr><tr>
     <td>LCD Contrast</td>
     <td>Rotary Potentiometer (Small)</td>
@@ -108,19 +136,27 @@ td {
     <td>Green LED - 3mm</td>
     <td class="props">package 3 mm [THT]; leg yes; color Green (570nm)</td>
 </tr><tr>
+    <td>MC14490</td>
+    <td>DIP - 16 pins</td>
+    <td class="props">package DIP (Dual Inline) [THT]; hole size 1.0mm,0.508mm;  true; chip label MC14990; pins 16; pin spacing 300mil</td>
+</tr><tr>
     <td>Mode</td>
     <td>Pushbutton</td>
     <td class="props">package [THT]</td>
 </tr><tr>
-    <td>Power Input</td>
+    <td>Power In</td>
     <td>Screw terminal - 2 pins</td>
     <td class="props">package THT; hole size 1.0mm,0.508mm; pins 2; pin spacing 0.137in (3.5mm)</td>
+</tr><tr>
+    <td>Q1</td>
+    <td>NPN-Transistor</td>
+    <td class="props">package TO92 [THT]; type NPN</td>
 </tr><tr>
     <td>R1</td>
     <td>330 Ω Resistor</td>
     <td class="props">package THT; tolerance ±5%; bands 4; resistance 330Ω; pin spacing 400 mil</td>
 </tr><tr>
-    <td>Rc 10Ω</td>
+    <td>Rcharge</td>
     <td>10 Ω Resistor</td>
     <td class="props">package THT; tolerance ±5%; bands 4; resistance 10Ω; pin spacing 400 mil</td>
 </tr><tr>
@@ -128,7 +164,7 @@ td {
     <td>Pad</td>
     <td class="props">layer copper1</td>
 </tr><tr>
-    <td>UC</td>
+    <td>UC1</td>
     <td>Electrolytic Capacitor</td>
     <td class="props">package 300 mil [THT, electrolytic]; capacitance 4.7mF; voltage 6.3V</td>
 </tr><tr>
@@ -166,16 +202,24 @@ td {
     <td class="props">package 100 mil [THT, electrolytic]; capacitance 10µF; voltage 6.3V</td>
 </tr><tr>
     <td>1</td>
+    <td>Ceramic Capacitor</td>
+    <td class="props">package 100 mil [THT, multilayer]; capacitance 100nF; voltage 6.3V</td>
+</tr><tr>
+    <td>1</td>
     <td>Electrolytic Capacitor</td>
     <td class="props">package 100 mil [THT, electrolytic]; capacitance 0.1mF; voltage 6.3V</td>
 </tr><tr>
     <td>1</td>
-    <td>Schottky Diode</td>
-    <td class="props">package 300 mil [THT]; type Schottky; part # 1N5817</td>
+    <td>Zener Diode</td>
+    <td class="props">package 300 mil [THT]; breakdown voltage 9.1V; type Zener; power dissipation 0.5W; part # 1N4732A</td>
 </tr><tr>
     <td>3</td>
     <td>Pushbutton</td>
     <td class="props">package [THT]</td>
+</tr><tr>
+    <td>1</td>
+    <td>Schottky Diode</td>
+    <td class="props">package 300 mil [THT]; type Schottky; part # 1N5817</td>
 </tr><tr>
     <td>6</td>
     <td>LM35 Temperature Sensor</td>
@@ -189,6 +233,10 @@ td {
     <td>Screw terminal - 6 pins</td>
     <td class="props">package THT; hole size 1.0mm,0.508mm; pins 6; pin spacing 0.137in (3.5mm)</td>
 </tr><tr>
+    <td>5</td>
+    <td>0 Ω Resistor</td>
+    <td class="props">package 0805 [SMD]; tolerance ±5%; resistance 0Ω</td>
+</tr><tr>
     <td>1</td>
     <td>Rotary Potentiometer (Small)</td>
     <td class="props">size Rotary - 9mm; track Linear; type Rotary Shaft Potentiometer; maximum resistance 10kΩ</td>
@@ -196,6 +244,14 @@ td {
     <td>1</td>
     <td>Green LED - 3mm</td>
     <td class="props">package 3 mm [THT]; leg yes; color Green (570nm)</td>
+</tr><tr>
+    <td>1</td>
+    <td>DIP - 16 pins</td>
+    <td class="props">package DIP (Dual Inline) [THT]; hole size 1.0mm,0.508mm;  true; chip label MC14990; pins 16; pin spacing 300mil</td>
+</tr><tr>
+    <td>1</td>
+    <td>NPN-Transistor</td>
+    <td class="props">package TO92 [THT]; type NPN</td>
 </tr><tr>
     <td>1</td>
     <td>330 Ω Resistor</td>
