@@ -20,8 +20,9 @@
 #define METHOD_BEGIN 0
 #define METHOD_END 15
 
-int fineAdjust[GEARS] = {-5, 5, 4, -5, 4, -8};
-//int fineAdjust[GEARS] = {0, 0, 0, 0, 0, 0};
+//int fineAdjust[GEARS] = {0, 0, 0, 0, 0, 0}; //No Fine Tuning
+//int fineAdjust[GEARS] = {-5, 5, 4, -5, 4, -8}; //USB
+int fineAdjust[GEARS] = {3, 5, 0, 0, -3, 0}; //In Shield, AH Sensors
 
 void readValues(){
   vcc = readVcc();

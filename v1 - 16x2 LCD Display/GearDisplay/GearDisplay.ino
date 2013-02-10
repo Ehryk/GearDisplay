@@ -111,6 +111,7 @@ void setup() {
     pinMode(g, INPUT);
   }
   pinMode(LED_PIN, OUTPUT);
+  pinMode(LED2_PIN, OUTPUT);
   pinMode(MODE_PIN, INPUT);
   pinMode(UP_PIN, INPUT);
   pinMode(DOWN_PIN, INPUT);
