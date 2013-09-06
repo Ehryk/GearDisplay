@@ -72,7 +72,7 @@ unsigned long updateInterval = 500; //When to update the display between non-imm
 unsigned long lastLoopStart = 0;
 
 //Debugging
-boolean debug = true;
+boolean debug = false;
 unsigned long debugRefresh = 0;
 
 //These are addresses in the EEPROM for persistent storage
@@ -100,7 +100,9 @@ unsigned long logRefreshed = 0; //Time since log values last saved to EEPROM
 //setup() gets called once at power on/reset of Arduino
 void setup() {
   // initialize serial communication at 9600 bits per second:
-  Serial.begin(BAUD);
+  if (debug)
+    Serial.begin(BAUD);
+    
   analogReference(DEFAULT); //Use 5v Default AREF
   
   //Set pin modes

@@ -111,24 +111,24 @@ void writeLogShifts(boolean lifeTime) {
   else lcd.print(formatShifts(shiftsToGear[0], 3));
   lcd.print(" ");
   
+  lcd.print("3:");
+  if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[2], 3));
+  else lcd.print(formatShifts(shiftsToGear[2], 3));
+  
+  lcd.print("5:");
+  if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[4], 3));
+  else lcd.print(formatShifts(shiftsToGear[4], 3));
+  lcd.print(" ");
+  
+  lcd.setCursor(0, 1);
   lcd.print("2:");
   if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[1], 3));
   else lcd.print(formatShifts(shiftsToGear[1], 3));
   lcd.print(" ");
   
-  lcd.print("3:");
-  if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[2], 3));
-  else lcd.print(formatShifts(shiftsToGear[2], 3));
-  
-  lcd.setCursor(0, 1);
   lcd.write((byte)FOUR_COLON);
   if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[3], 3));
   else lcd.print(formatShifts(shiftsToGear[3], 3));
-  lcd.print(" ");
-  
-  lcd.print("5:");
-  if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[4], 3));
-  else lcd.print(formatShifts(shiftsToGear[4], 3));
   lcd.print(" ");
   
   lcd.print("R:");
@@ -144,27 +144,27 @@ void writeLogGearTime(int divisor, char unit, boolean lifeTime) {
   lcd.print(unit);
   lcd.print(" ");
   
+  lcd.print("3:");
+  if (lifeTime) lcd.print(formatTime(lifeTimeInGear[3] / divisor, 2));
+  else lcd.print(formatTime(timeInGear[3] / divisor, 2));
+  lcd.print(unit);
+  
+  lcd.print("5:");
+  if (lifeTime) lcd.print(formatTime(lifeTimeInGear[5] / divisor, 2));
+  else lcd.print(formatTime(timeInGear[5] / divisor, 2));
+  lcd.print(unit);
+  lcd.print(" ");
+  
+  lcd.setCursor(0, 1);
   lcd.print("2:");
   if (lifeTime) lcd.print(formatTime(lifeTimeInGear[2] / divisor, 2));
   else lcd.print(formatTime(timeInGear[2] / divisor, 2));
   lcd.print(unit);
   lcd.print(" ");
   
-  lcd.print("3:");
-  if (lifeTime) lcd.print(formatTime(lifeTimeInGear[3] / divisor, 2));
-  else lcd.print(formatTime(timeInGear[3] / divisor, 2));
-  lcd.print(unit);
-  
-  lcd.setCursor(0, 1);
   lcd.write((byte)FOUR_COLON);
   if (lifeTime) lcd.print(formatTime(lifeTimeInGear[4] / divisor, 2));
   else lcd.print(formatTime(timeInGear[4] / divisor, 2));
-  lcd.print(unit);
-  lcd.print(" ");
-  
-  lcd.print("5:");
-  if (lifeTime) lcd.print(formatTime(lifeTimeInGear[5] / divisor, 2));
-  else lcd.print(formatTime(timeInGear[5] / divisor, 2));
   lcd.print(unit);
   lcd.print(" ");
   
@@ -187,24 +187,24 @@ void writeLogGearPercent(boolean lifeTime) {
   else lcd.print(formatPercent(timeInGear[1] / total * 100, 0));
   lcd.print(" ");
   
+  lcd.print("3:");
+  if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[3] / total * 100, 2));
+  else lcd.print(formatPercent(timeInGear[3] / total * 100, 0));
+  
+  lcd.print("5:");
+  if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[5] / total * 100, 2));
+  else lcd.print(formatPercent(timeInGear[5] / total * 100, 0));
+  lcd.print(" ");
+  
+  lcd.setCursor(0, 1);
   lcd.print("2:");
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[2] / total * 100, 2));
   else lcd.print(formatPercent(timeInGear[2] / total * 100, 0));
   lcd.print(" ");
   
-  lcd.print("3:");
-  if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[3] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[3] / total * 100, 0));
-  
-  lcd.setCursor(0, 1);
   lcd.write((byte)FOUR_COLON);
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[4] / total * 100, 2));
   else lcd.print(formatPercent(timeInGear[4] / total * 100, 0));
-  lcd.print(" ");
-  
-  lcd.print("5:");
-  if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[5] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[5] / total * 100, 0));
   lcd.print(" ");
   
   lcd.print("R:");
