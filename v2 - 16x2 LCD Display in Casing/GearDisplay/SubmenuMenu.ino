@@ -74,7 +74,7 @@ void writeMenuLED() {
     case LED_CITY:    lcd.print("ON - City   "); break;
     case LED_HIGHWAY: lcd.print("ON - Highway"); break;
     case LED_ERROR:   lcd.print("ON - Error  "); break;
-    case LED_OFF:     lcd.print("OFF         ");
+    case LED_OFF:     lcd.print("OFF         "); break;
     default:          lcd.print("UNKNOWN     "); break;
   }
 }
