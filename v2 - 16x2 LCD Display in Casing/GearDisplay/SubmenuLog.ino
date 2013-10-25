@@ -50,7 +50,7 @@ void writeLog(int logScreen) {
   }
 }
 
-void writeLogHwyCity(int divisor, char unit, boolean lifeTime) {
+void writeLogHwyCity(double divisor, char unit, boolean lifeTime) {
   //Highway = In Fifth Gear
   //City = In any other gear but Fifth
   float city = 0;
@@ -71,7 +71,10 @@ void writeLogHwyCity(int divisor, char unit, boolean lifeTime) {
   lcd.setCursor(0, 0);
   if (lifeTime) lcd.print("T ");
   lcd.print("City:   ");
-  if (divisor > 0) lcd.print(city / divisor, 2);
+  if (divisor > 0) {
+    lcd.print(" ");
+    lcd.print(city / divisor, 2);
+  }
   else {
     lcd.print(" ");
     lcd.print(city / (city + highway) * 100, 1);
@@ -81,7 +84,10 @@ void writeLogHwyCity(int divisor, char unit, boolean lifeTime) {
   lcd.setCursor(0, 1);
   if (lifeTime) lcd.print("T ");
   lcd.print("Highway:");
-  if (divisor > 0) lcd.print(highway / divisor, 2);
+  if (divisor > 0) {
+    lcd.print(" ");
+    lcd.print(highway / divisor, 2);
+  }
   else {
     lcd.print(" ");
     lcd.print(highway / (city + highway) * 100, 1);
@@ -89,7 +95,7 @@ void writeLogHwyCity(int divisor, char unit, boolean lifeTime) {
   lcd.print(unit);
 }
 
-void writeLogUpTime(int divisor, char unit) {
+void writeLogUpTime(double divisor, char unit) {
   float up = upTime / divisor;
   float life = lifeUpTime / divisor;
   
@@ -114,19 +120,19 @@ void writeLogShifts(boolean lifeTime) {
   lcd.print("3:");
   if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[2], 3));
   else lcd.print(formatShifts(shiftsToGear[2], 3));
+  lcd.print(" ");
   
   lcd.print("5:");
   if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[4], 3));
   else lcd.print(formatShifts(shiftsToGear[4], 3));
-  lcd.print(" ");
   
   lcd.setCursor(0, 1);
-  lcd.print("2:");
+  lcd.print((byte)TWO_COLON);
   if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[1], 3));
   else lcd.print(formatShifts(shiftsToGear[1], 3));
   lcd.print(" ");
   
-  lcd.write((byte)FOUR_COLON);
+  lcd.write("4:");
   if (lifeTime) lcd.print(formatShifts(lifeShiftsToGear[3], 3));
   else lcd.print(formatShifts(shiftsToGear[3], 3));
   lcd.print(" ");
@@ -136,7 +142,7 @@ void writeLogShifts(boolean lifeTime) {
   else lcd.print(formatShifts(shiftsToGear[5], 3));
 }
 
-void writeLogGearTime(int divisor, char unit, boolean lifeTime) {
+void writeLogGearTime(double divisor, char unit, boolean lifeTime) {
   lcd.setCursor(0, 0);
   lcd.write((byte)ONE_COLON);
   if (lifeTime) lcd.print(formatTime(lifeTimeInGear[1] / divisor, 2));
@@ -148,21 +154,21 @@ void writeLogGearTime(int divisor, char unit, boolean lifeTime) {
   if (lifeTime) lcd.print(formatTime(lifeTimeInGear[3] / divisor, 2));
   else lcd.print(formatTime(timeInGear[3] / divisor, 2));
   lcd.print(unit);
+  lcd.print(" ");
   
   lcd.print("5:");
   if (lifeTime) lcd.print(formatTime(lifeTimeInGear[5] / divisor, 2));
   else lcd.print(formatTime(timeInGear[5] / divisor, 2));
   lcd.print(unit);
-  lcd.print(" ");
   
   lcd.setCursor(0, 1);
-  lcd.print("2:");
+  lcd.print((byte)TWO_COLON);
   if (lifeTime) lcd.print(formatTime(lifeTimeInGear[2] / divisor, 2));
   else lcd.print(formatTime(timeInGear[2] / divisor, 2));
   lcd.print(unit);
   lcd.print(" ");
   
-  lcd.write((byte)FOUR_COLON);
+  lcd.write("4:");
   if (lifeTime) lcd.print(formatTime(lifeTimeInGear[4] / divisor, 2));
   else lcd.print(formatTime(timeInGear[4] / divisor, 2));
   lcd.print(unit);
@@ -184,35 +190,35 @@ void writeLogGearPercent(boolean lifeTime) {
   lcd.setCursor(0, 0);
   lcd.write((byte)ONE_COLON);
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[1] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[1] / total * 100, 0));
+  else lcd.print(formatPercent(timeInGear[1] / total * 100, 2));
   lcd.print(" ");
   
   lcd.print("3:");
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[3] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[3] / total * 100, 0));
+  else lcd.print(formatPercent(timeInGear[3] / total * 100, 2));
+  lcd.print(" ");
   
   lcd.print("5:");
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[5] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[5] / total * 100, 0));
-  lcd.print(" ");
+  else lcd.print(formatPercent(timeInGear[5] / total * 100, 2));
   
   lcd.setCursor(0, 1);
-  lcd.print("2:");
+  lcd.print((byte)TWO_COLON);
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[2] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[2] / total * 100, 0));
+  else lcd.print(formatPercent(timeInGear[2] / total * 100, 2));
   lcd.print(" ");
   
-  lcd.write((byte)FOUR_COLON);
+  lcd.write("4:");
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[4] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[4] / total * 100, 0));
+  else lcd.print(formatPercent(timeInGear[4] / total * 100, 2));
   lcd.print(" ");
   
   lcd.print("R:");
   if (lifeTime) lcd.print(formatPercent(lifeTimeInGear[6] / total * 100, 2));
-  else lcd.print(formatPercent(timeInGear[6] / total * 100, 0));
+  else lcd.print(formatPercent(timeInGear[6] / total * 100, 2));
 }
 
-void writeLogNeutral(int divisor, char unit, boolean lifeTime) {
+void writeLogNeutral(double divisor, char unit, boolean lifeTime) {
   float gearTime = 0;
   float neutralTime = 0;
   if (lifeTime) {

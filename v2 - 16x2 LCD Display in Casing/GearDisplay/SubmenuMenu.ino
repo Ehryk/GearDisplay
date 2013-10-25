@@ -156,20 +156,20 @@ void writeValues() {
   lcd.print(formatValue(values[0]));
   lcd.print(" ");
   
-  lcd.print("2:");
-  lcd.print(formatValue(values[1]));
-  lcd.print(" ");
-  
   lcd.print("3:");
   lcd.print(formatValue(values[2]));
-  
-  lcd.setCursor(0, 1);
-  lcd.write((byte)FOUR_COLON);
-  lcd.print(formatValue(values[3]));
   lcd.print(" ");
   
   lcd.print("5:");
   lcd.print(formatValue(values[4]));
+  
+  lcd.setCursor(0, 1);
+  lcd.print((byte)TWO_COLON);
+  lcd.print(formatValue(values[1]));
+  lcd.print(" ");
+  
+  lcd.write("4:");
+  lcd.print(formatValue(values[3]));
   lcd.print(" ");
   
   lcd.print("R:");
@@ -181,16 +181,16 @@ void writeVoltages() {
   lcd.print(toVoltage(values[0]), 2);
   lcd.print("V ");
   
-  lcd.print(toVoltage(values[1]), 2);
-  lcd.print("V ");
-  
   lcd.print(toVoltage(values[2]), 2);
-  
-  lcd.setCursor(0, 1);
-  lcd.print(toVoltage(values[3]), 2);
   lcd.print("V ");
   
   lcd.print(toVoltage(values[4]), 2);
+  
+  lcd.setCursor(0, 1);
+  lcd.print(toVoltage(values[1]), 2);
+  lcd.print("V ");
+  
+  lcd.print(toVoltage(values[3]), 2);
   lcd.print("V ");
   
   lcd.print(toVoltage(values[5]), 2);

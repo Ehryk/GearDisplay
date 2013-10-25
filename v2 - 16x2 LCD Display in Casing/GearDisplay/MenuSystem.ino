@@ -48,7 +48,7 @@ void writePrompt(char* title) {
   lcd.print(title);
   
   lcd.setCursor(0, 1);
-  lcd.print("Press + or -");
+  lcd.print("Press + or -    ");
 }
 
 void writeBasic(int g, char s) {

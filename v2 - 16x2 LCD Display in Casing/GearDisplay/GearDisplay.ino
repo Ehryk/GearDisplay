@@ -11,8 +11,8 @@ Ehryk Menze
 
 /* Define Pin Usage */
 //Digital Input Pins
-#define DOWN_PIN 0
-#define UP_PIN 1
+#define UP_PIN 0
+#define DOWN_PIN 1
 #define MODE_PIN 2
 #define LED_PIN 5
 #define LCD_BRIGHTNESS_PIN 6

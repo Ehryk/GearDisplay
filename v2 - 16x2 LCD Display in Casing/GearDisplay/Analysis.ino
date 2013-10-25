@@ -20,11 +20,13 @@
 #define METHOD_BEGIN 0
 #define METHOD_END 15
 
+int gearTrim[GEARS] = {32, -5, 38, 43, 12, 16}; //Amount to fine tune each sensor output
+
 void readValues(){
   vcc = readVcc();
   theoretical = vcc * 1023 / 1000 / 2;
   for (int g = 0; g < GEARS; g++) {
-    values[g] = readHallEffect(gearPin[g]);
+    values[g] = readHallEffect(gearPin[g]) + gearTrim[g];
   }
 }
 

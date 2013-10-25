@@ -4,7 +4,8 @@ Configures and handles the LCD Display
 
 #define SIGMA 0
 #define ONE_COLON 1
-#define T_COLON 2
+#define TWO_COLON 2
+#define T_COLON 3
 #define FOUR_COLON 4
 
 void setLCDBrightness(int v) {
@@ -31,6 +32,15 @@ void createCustomCharacters() {
     B01011,
     B11100,
   };
+  byte twoColon[8] = {
+    B01000,
+    B10101,
+    B00101,
+    B01000,
+    B01001,
+    B10001,
+    B11100,
+  };
   byte fourColon[8] = {
     B00100,
     B01101,
@@ -52,6 +62,7 @@ void createCustomCharacters() {
 
   lcd.createChar(SIGMA, sigma);
   lcd.createChar(ONE_COLON, oneColon);
+  lcd.createChar(TWO_COLON, twoColon);
   lcd.createChar(FOUR_COLON, fourColon);
   lcd.createChar(T_COLON, tColon);
 }
