@@ -33,14 +33,14 @@ This is the first version I wrote, tuned for a standard 16x2 LCD screen. A schem
 1. Credits
 1. Display off
 
-![v1](https://raw2.github.com/Ehryk/GearDisplay/master/Documentation/Pictures/2.07.2013%20-%20Fritzing%20PCBs/4%20-%20With%20LCD.JPG)
+![v1](https://raw2.github.com/Ehryk/GearDisplay/master/Documentation/Pictures/2013.02.07%20-%20Fritzing%20PCBs/4%20-%20With%20LCD.jpg)
 
 **v2 - 16x2 LCD Display - In Casing**
 
 v1 was made to be mounted with the circuit board visible, but I then found some nice black project cases on eBay. This version is smaller to fit in the enclosure, uses an ultracapacitor keep-alive circuit to keep power to the unit briefly after the vehicle has been turned off for the final EEPROM writes, uses a transistor to selectively power the Hall Effect sensors (optional), and MC14490 hardware switch debouncer (optional). I installed it in a 2003 Jeep Wrangler Rubicon.
 
-![v2 Installed](https://raw2.github.com/Ehryk/GearDisplay/master/Documentation/Pictures/09.06.2013%20-%20Install/6%20-%20Mounting%20on%20Dashboard.JPG)
-![v2 Sensor Ring](https://raw2.github.com/Ehryk/GearDisplay/master/Documentation/Pictures/09.06.2013%20-%20Install/5%20-%20Hall%20Effect%20Installation.JPG)
+![v2 Installed](https://raw2.github.com/Ehryk/GearDisplay/master/Documentation/Pictures/2013.09.06%20-%20Install/6%20-%20Mounting%20on%20Dashboard.jpg)
+![v2 Sensor Ring](https://raw2.github.com/Ehryk/GearDisplay/master/Documentation/Pictures/2013.09.06%20-%20Install/5%20-%20Hall%20Effect%20Installation.jpg)
 
 **v3 - Color Touchscreen**
 
