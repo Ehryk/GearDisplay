@@ -31,7 +31,7 @@ void writeMenu(int menuScreen) {
       case MENU_LOGGING: writeMenuLogging(); break;
       case MENU_DEBUG: writeMenuDebug(); break;
       case MENU_VOLTAGES: writeVoltages(); break;
-      case MENU_VALUES: writeValues(); break;
+      case MENU_VALUES: writeValues(true); break;
       case MENU_V_IN: writeVin(); break;
       case MENU_EXIT: writePrompt("EXIT MENU: "); break;
     }
@@ -150,30 +150,61 @@ void writeMenuDebug() {
   else lcd.print("OFF");
 }
 
-void writeValues() {
-  lcd.setCursor(0, 0);
-  lcd.write((byte)ONE_COLON);
-  lcd.print(formatValue(values[0]));
-  lcd.print(" ");
-  
-  lcd.print("3:");
-  lcd.print(formatValue(values[2]));
-  lcd.print(" ");
-  
-  lcd.print("5:");
-  lcd.print(formatValue(values[4]));
-  
-  lcd.setCursor(0, 1);
-  lcd.print((byte)TWO_COLON);
-  lcd.print(formatValue(values[1]));
-  lcd.print(" ");
-  
-  lcd.write("4:");
-  lcd.print(formatValue(values[3]));
-  lcd.print(" ");
-  
-  lcd.print("R:");
-  lcd.print(formatValue(values[5]));
+void writeValues(bool raw) {
+  if (raw)
+  {
+    //Raw
+    lcd.setCursor(0, 0);
+    lcd.write((byte)ONE_COLON);
+    lcd.print(formatValue(values[0] - gearTrim[0]));
+    lcd.print(" ");
+    
+    lcd.print("3:");
+    lcd.print(formatValue(values[2] - gearTrim[2]));
+    lcd.print(" ");
+    
+    lcd.print("5:");
+    lcd.print(formatValue(values[4] - gearTrim[4]));
+    
+    lcd.setCursor(0, 1);
+    lcd.print((byte)TWO_COLON);
+    lcd.print(formatValue(values[1] - gearTrim[1]));
+    lcd.print(" ");
+    
+    lcd.write("4:");
+    lcd.print(formatValue(values[3] - gearTrim[3]));
+    lcd.print(" ");
+    
+    lcd.print("R:");
+    lcd.print(formatValue(values[5] - gearTrim[5]));
+  }
+  else
+  {
+    //Corrected
+    lcd.setCursor(0, 0);
+    lcd.write((byte)ONE_COLON);
+    lcd.print(formatValue(values[0]));
+    lcd.print(" ");
+    
+    lcd.print("3:");
+    lcd.print(formatValue(values[2]));
+    lcd.print(" ");
+    
+    lcd.print("5:");
+    lcd.print(formatValue(values[4]));
+    
+    lcd.setCursor(0, 1);
+    lcd.print((byte)TWO_COLON);
+    lcd.print(formatValue(values[1]));
+    lcd.print(" ");
+    
+    lcd.write("4:");
+    lcd.print(formatValue(values[3]));
+    lcd.print(" ");
+    
+    lcd.print("R:");
+    lcd.print(formatValue(values[5]));
+  }
 }
 
 void writeVoltages() {
@@ -257,7 +288,7 @@ void menuUpPressed() {
       stageEEPROM();
       break;
     case MENU_VOLTAGES: writeVoltages(); break;
-    case MENU_VALUES: writeValues(); break;
+    case MENU_VALUES: writeValues(true); break;
     case MENU_V_IN: writeVin(); break;
     case MENU_EXIT: inMenu = false; break;
   }

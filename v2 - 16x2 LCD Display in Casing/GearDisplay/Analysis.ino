@@ -20,7 +20,7 @@
 #define METHOD_BEGIN 0
 #define METHOD_END 15
 
-int gearTrim[GEARS] = {32, -5, 38, 43, 12, 16}; //Amount to fine tune each sensor output
+int gearTrim[GEARS] = {25, -3, 22, 37, 2, 10}; //Amount to fine tune each sensor output
 
 void readValues(){
   vcc = readVcc();

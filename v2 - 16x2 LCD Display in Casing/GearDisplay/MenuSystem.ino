@@ -31,7 +31,7 @@ void updateDisplay(int mode, int gear) {
     case MODE_VARIABLES_V: writeVariables(gear, true); break;
     case MODE_VARIABLES: writeVariables(gear, false); break;
     case MODE_VOLTAGES: writeVoltages(); break;
-    case MODE_VALUES: writeValues(); break;
+    case MODE_VALUES: writeValues(false); break;
     case MODE_V_IN: writeVin(); break;
     case MODE_FILL: writeFill(gearChar(gear)); break;
     case MODE_MENU: writeMenu(menuMode); break;
