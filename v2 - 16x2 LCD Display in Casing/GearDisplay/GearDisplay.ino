@@ -1,5 +1,6 @@
 /*
 Manual Transmission Gear Display
+v3.0 2016.10.04
 Ehryk Menze
 */
 
@@ -11,9 +12,11 @@ Ehryk Menze
 
 /* Define Pin Usage */
 //Digital Input Pins
-#define UP_PIN 0
-#define DOWN_PIN 1
 #define MODE_PIN 2
+#define UP_PIN 3
+#define DOWN_PIN 4
+#define ACC_PIN NA
+#define SEN_PWR_PIN NA
 #define LED_PIN 5
 #define LCD_BRIGHTNESS_PIN 6
 #define LCD_RS_PIN 7
@@ -22,10 +25,11 @@ Ehryk Menze
 #define LCD_D6 10
 #define LCD_D5 11
 #define LCD_D4 12
+#define INT_LED_PIN 13
 int gearPin[GEARS] = {0, 1, 2, 3, 4, 5}; //Analog Input Pins
 
 /* Compiler Constants, Defaults */
-#define BAUD 9600 //Used for Serial communication
+#define BAUD 57600 //Used for Serial communication
 #define DEFAULT_TOLERANCE 100 //Initial Tolerance Value
 #define DEFAULT_TOLERANCE_INCREMENT 5 //Initial Tolerance Increment/Decrement Value
 #define DEFAULT_BRIGHTNESS 255 //Initial Brightness Value
@@ -68,11 +72,12 @@ int led = 1; //Whether or not to light the LED when a gear is engaged (default),
 boolean updateNeeded = 0; //Whether or not to update the display immediately
 unsigned long displayLastUpdated = 0; //When the display was last updated
 unsigned long updateInterval = 500; //When to update the display between non-immediate updates
+boolean loopToggle = false;
 
 unsigned long lastLoopStart = 0;
 
 //Debugging
-boolean debug = false;
+boolean debug = true;
 unsigned long debugRefresh = 0;
 
 //These are addresses in the EEPROM for persistent storage
@@ -95,8 +100,9 @@ unsigned long lifeUpTime = 0; //Life Time persists across power cycles
 unsigned int lifeShiftsToGear[6]; //Life Shifts persists across power cycles
 unsigned long logRefreshed = 0; //Time since log values last saved to EEPROM
 
-
+/*=========*/
 /*  SETUP  */
+/*=========*/
 //setup() gets called once at power on/reset of Arduino
 void setup() {
   // initialize serial communication at 9600 bits per second:
@@ -105,20 +111,28 @@ void setup() {
     
   analogReference(DEFAULT); //Use 5v Default AREF
   
-  //Set pin modes
+  //Set Pin Directions
   for (int g = 0; g < GEARS; g++) {
     pinMode(g, INPUT);
   }
   pinMode(LED_PIN, OUTPUT);
+  pinMode(INT_LED_PIN, OUTPUT);
   pinMode(MODE_PIN, INPUT);
   pinMode(UP_PIN, INPUT);
   pinMode(DOWN_PIN, INPUT);
   pinMode(LCD_BRIGHTNESS_PIN, OUTPUT);
-  
+  //pinMode(SEN_PWR_PIN, OUTPUT);
+  //pinMode(ACC_PIN, OUTPUT);
+
+  //Set Initial States
   //Use internal pull-up resistors
   digitalWrite(MODE_PIN, HIGH);
   digitalWrite(UP_PIN, HIGH);
   digitalWrite(DOWN_PIN, HIGH);
+  //Internal LED Off
+  digitalWrite(INT_LED_PIN, LOW);
+  //Power up Sensors
+  //digitalWrite(SEN_PWR_PIN, HIGH);
   
   //Set up LCD
   brightness = DEFAULT_BRIGHTNESS;
@@ -143,11 +157,13 @@ void setup() {
   writeCredits();
   delay(1500);
   lcd.clear();
-  
+
   lastLoopStart = millis();
 }
 
-/*  LOOP  */
+/*==========*/
+/*   LOOP   */
+/*==========*/
 //loop() gets called repeatedly for the duration of power
 void loop() {
   checkPowerLoss(); //Check for power loss
@@ -202,5 +218,8 @@ void loop() {
   //Update the display
   if (updateNeeded || millis() - displayLastUpdated > updateInterval)
     updateDisplay(mode, gear);
+
+  loopToggle = !loopToggle;
+  digitalWrite(INT_LED_PIN, loopToggle);
 }
 

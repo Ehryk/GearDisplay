@@ -121,10 +121,12 @@ boolean voltageLow() {
 
 void shutDown() {
   unsigned long saveTime = millis();
-  if (!debug) {
-    digitalWrite(LED_PIN, LOW); //Turn Off LED
-    digitalWrite(LCD_BRIGHTNESS_PIN, LOW); //Turn Off LCD Backlight
-  }
+
+  //Power down Sensors
+  //pinMode(SEN_PWR_PIN, INPUT);
+  digitalWrite(LED_PIN, LOW); //Turn Off LED
+  digitalWrite(LCD_BRIGHTNESS_PIN, LOW); //Turn Off LCD Backlight
+  
   if (enableLog) writeLog(); //Save Log Values
   if (enableEEPROM) writeEEPROM(); //Save Variable State
   
@@ -159,5 +161,9 @@ void shutDown() {
     Serial.println("mV");
     Serial.println();
   }
+  
+  //pinMode(SEN_PWR_PIN, OUTPUT);
+  //digitalWrite(SEN_PWR_PIN, HIGH);
+  
   return;
 }
